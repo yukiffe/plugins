@@ -3,15 +3,14 @@ import { events } from "bdsx/event";
 import { database, root, Territory } from "../../../utils/utils";
 import { AreaTerritory } from "../region_base";
 import { map } from "./../region/region_form";
-import { getXZ } from "./../../../utils/utils";
+import { CommandPermissionLevel } from "bdsx/bds/command";
 
 events.chestOpen.on(ev => {
     const player = ev.player;
-    const ni = player.getNetworkIdentifier();
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return CANCEL;
     const block_position = ev.blockPos;
-    // const [x, z] = get_xz_chunk();
-    const area_territory = new AreaTerritory(ni);
-    const area_json = `${x}_${z}.json`;
+    const [x, z] = Territory.make_xz_chunk(block_position);
+    const area_json = Territory.area_json(x, z);
     if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
         const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
         if (player.getNameTag() !== data._player_name) {
@@ -24,12 +23,10 @@ events.chestOpen.on(ev => {
 
 events.blockDestroy.on(ev => {
     const player = ev.player;
-    const ni = player.getNetworkIdentifier();
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return CANCEL;
     const block_position = ev.blockPos;
-    const x = Math.ceil(block_position.x / 8);
-    const z = Math.ceil(block_position.z / 8);
-    const area_territory = new AreaTerritory(ni);
-    const area_json = `${x}_${z}.json`;
+    const [x, z] = Territory.make_xz_chunk(block_position);
+    const area_json = Territory.area_json(x, z);
     if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
         const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
         if (player.getNameTag() !== data._player_name) {
@@ -42,12 +39,10 @@ events.blockDestroy.on(ev => {
 
 events.blockPlace.on(ev => {
     const player = ev.player;
-    const ni = player.getNetworkIdentifier();
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return CANCEL;
     const block_position = ev.blockPos;
-    const x = Math.ceil(block_position.x / 8);
-    const z = Math.ceil(block_position.z / 8);
-    const area_territory = new AreaTerritory(ni);
-    const area_json = `${x}_${z}.json`;
+    const [x, z] = Territory.make_xz_chunk(block_position);
+    const area_json = Territory.area_json(x, z);
     if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
         const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
         if (player.getNameTag() !== data._player_name) {
