@@ -6,6 +6,7 @@ import * as fs from "fs";
 import { Position } from "source-map";
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
 import { int32_t } from "bdsx/nativetype";
+import { AreaTerritory } from "../src/nations/region_base";
 
 namespace Utils {
     export class Database {
@@ -115,7 +116,16 @@ export const chat = new Utils.Chat();
 export const console_message = new Utils.ConsoleMessage();
 
 export namespace Territory {
-    function get_xz_chunk(position: BlockPos | Vec3): number[] {
+    export function make_xz_chunk(position: BlockPos | Vec3): number[] {
         return [Math.ceil(position.x / 8), Math.ceil(position.z / 8)];
+    }
+    export function xz_chunk(areaTerritory: AreaTerritory): number[] {
+        return [areaTerritory.x_chunk, areaTerritory.z_chunk];
+    }
+    export function area_json(x: number, z: number): string {
+        return `${x}_${z}.json`;
+    }
+    export function player_json(ni: NetworkIdentifier): string {
+        return `${ni.getAddressHigh}_${ni.getAddressLow}.json`;
     }
 }

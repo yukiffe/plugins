@@ -1,7 +1,7 @@
 import { Vec3 } from "bdsx/bds/blockpos";
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { chat, database, root } from "../../../utils/utils";
+import { chat, database, root, Territory } from "../../../utils/utils";
 import { AreaTerritory } from "../region_base";
 
 export const map = new Map<string, boolean>(); //임시용
@@ -9,8 +9,9 @@ export class Region {
     static async main_menu(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const areaTerritory = new AreaTerritory(ni);
-        const area_json = `${areaTerritory.x_chunk}_${areaTerritory.z_chunk}.json`;
-        const user_json = `${ni.getAddressHigh}_${ni.getAddressLow}.json`;
+        const [x, z] = Territory.xz_chunk(areaTerritory);
+        const area_json = Territory.area_json(x, z);
+        const user_json = Territory.player_json(ni);
         const res = await Form.sendTo(ni, {
             type: "form",
             title: "§l토지",
@@ -18,9 +19,12 @@ export class Region {
             buttons: [
                 {
                     text: "§l§e땅 정보",
-                }, //
+                },
                 {
                     text: "§l§a땅 이동",
+                },
+                {
+                    text: "§l§a땅 초대",
                 },
                 {
                     text: "§l§a땅 건축",
@@ -61,15 +65,21 @@ export class Region {
                     map[actor.getNameTag()] = false;
                     actor.sendMessage(chat.mid("땅 전용 건축이 꺼졌습니다."));
                 }
+                return;
             case 3:
+                return;
+            case 4:
                 if (await this.check_cancel(ni, "땅 삭제(주의 복구불가)")) return;
                 actor.sendMessage(chat.mid("땅을 삭제했습니다."));
                 if (database.exist_file(root.DATABASE_TERRITORY_PLAYERS, user_json)) {
                     const data = database.load(root.DATABASE_TERRITORY_PLAYERS, user_json);
                     const loc = data._spawn_position;
-                    database.unlink(root.DATABASE_TERRITORY_AREA, `${Math.ceil(loc.x / 8)}_${Math.ceil(loc.z / 8)}.json`);
+                    const [x, z] = Territory.make_xz_chunk(Vec3.create(loc));
+                    const area_json = Territory.area_json(x, z);
+                    database.unlink(root.DATABASE_TERRITORY_AREA, area_json);
                     database.unlink(root.DATABASE_TERRITORY_PLAYERS, user_json);
                 }
+                return;
             default:
                 actor.sendMessage(chat.mid("§c명령어가 취소되었습니다."));
         }

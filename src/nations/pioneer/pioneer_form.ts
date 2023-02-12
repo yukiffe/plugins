@@ -1,14 +1,15 @@
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import * as fs from "fs";
-import { chat, database, root } from "../../../utils/utils";
+import { chat, database, root, Territory } from "../../../utils/utils";
 import { AreaTerritory, RegionBase } from "../region_base";
 
 export class Poineer {
     static async main_menu(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const areaTerritory = new AreaTerritory(ni);
-        const area_json = `${areaTerritory.x_chunk}_${areaTerritory.z_chunk}.json`;
+        const [x, z] = Territory.xz_chunk(areaTerritory);
+        const area_json = Territory.area_json(x, z);
         const res = await Form.sendTo(ni, {
             type: "form",
             title: "§l토지",
@@ -41,7 +42,7 @@ export class Poineer {
                     actor.sendMessage(chat.mid(`${data._player_name}님의 토지입니다.`));
                 } else {
                     database.upload(root.DATABASE_TERRITORY_AREA, area_json, areaTerritory);
-                    database.upload(root.DATABASE_TERRITORY_PLAYERS, `${ni.getAddressHigh}_${ni.getAddressLow}.json`, new RegionBase(ni, areaTerritory));
+                    database.upload(root.DATABASE_TERRITORY_PLAYERS, Territory.player_json(ni), new RegionBase(ni, areaTerritory));
                     actor.sendMessage(chat.mid(`§a새로운 땅을 개척했습니다.`));
                 }
                 return;
