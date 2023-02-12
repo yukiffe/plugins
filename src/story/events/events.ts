@@ -29,19 +29,19 @@ events.blockDestroy.on(ev => {
     const item_name = ev.blockSource.getBlock(ev.blockPos).getDescriptionId();
     switch (item_name) {
         case "tile.dirt":
-            story._fairy_tale_ratio = fairy_tale_ratio_func(player, story._fairy_tale_ratio, 2);
+            story._likelihood = fairy_tale_ratio_func(player, story._likelihood, 2);
             break;
         case "tile.stone":
-            story._fairy_tale_ratio = fairy_tale_ratio_func(player, story._fairy_tale_ratio, 3);
+            story._likelihood = fairy_tale_ratio_func(player, story._likelihood, 3);
             break;
         default:
-            story._fairy_tale_ratio = fairy_tale_ratio_func(player, story._fairy_tale_ratio, 1);
+            story._likelihood = fairy_tale_ratio_func(player, story._likelihood, 0.1);
             break;
     }
     database.upload(root.DATABASE_STORY, player_json, story);
 });
 
-function fairy_tale_ratio_func(player: Player, fairy_tale_ratio: number, weight: number): number {
-    player.runCommand(`titleraw @s actionbar{"rawtext":[{"text":"개연성 [${fairy_tale_ratio}] + ${weight}"}]}`);
-    return fairy_tale_ratio + weight;
+function fairy_tale_ratio_func(player: Player, likelihood: number, weight: number): number {
+    player.runCommand(`titleraw @s actionbar{"rawtext":[{"text":"개연성 [${likelihood.toPrecision(2)}] + ${weight}"}]}`);
+    return likelihood + weight;
 }
