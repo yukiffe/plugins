@@ -1,0 +1,22 @@
+{
+    "name": "@bdsx/server",
+    "version": "2.3.0",
+    "description": "server general plugins",
+    "main": "index.js",
+    "keywords": [],
+    "author": "yukiffe",
+    "bdsxPlugin": true,
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "prepare": "tsc || exit 0"
+    },
+    "license": "ISC",
+    "devDependencies": {
+        "@types/comment-json": "^2.4.2",
+        "bdsx": "file:../bdsx"
+    },
+    "dependencies": {
+        "comment-json": "~1.1.3"
+    }
+}
