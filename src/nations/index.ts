@@ -11,5 +11,5 @@ console_message.dos_log_server("Region Loading", yellow, 2);
 import "./region";
 console_message.dos_log_server("Region Loaded", green, 2);
 console_message.dos_log_server("events Loading", yellow, 2);
-import "./events";
+import "./events/events";
 console_message.dos_log_server("events Loaded", green, 2);

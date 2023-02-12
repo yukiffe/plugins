@@ -24,10 +24,10 @@ export class Region {
                     text: "§l§a땅 이동",
                 },
                 {
-                    text: "§l§a땅 초대",
+                    text: "§l§a땅 건축",
                 },
                 {
-                    text: "§l§a땅 건축",
+                    text: "§l§a땅 초대",
                 },
                 {
                     text: "§l§4땅 삭제",
@@ -57,7 +57,7 @@ export class Region {
                 }
                 return;
             case 2:
-                if (await this.check_cancel(ni, "땅 건축")) return;
+                if (await this.check_cancel(ni, "땅 건축(자기땅 외 부수기/설치x)")) return;
                 if (map[actor.getNameTag()] === null || map[actor.getNameTag()] === undefined || map[actor.getNameTag()] === false) {
                     map[actor.getNameTag()] = true;
                     actor.sendMessage(chat.mid("땅 전용 건축이 켜졌습니다."));
@@ -67,6 +67,7 @@ export class Region {
                 }
                 return;
             case 3:
+                actor.sendMessage(chat.mid("추가중인 기능입니다."));
                 return;
             case 4:
                 if (await this.check_cancel(ni, "땅 삭제(주의 복구불가)")) return;
@@ -79,6 +80,9 @@ export class Region {
                     database.unlink(root.DATABASE_TERRITORY_AREA, area_json);
                     database.unlink(root.DATABASE_TERRITORY_PLAYERS, user_json);
                 }
+                return;
+            case 5:
+                actor.sendMessage(chat.mid("추가중인 기능입니다."));
                 return;
             default:
                 actor.sendMessage(chat.mid("§c명령어가 취소되었습니다."));

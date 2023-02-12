@@ -2,12 +2,12 @@ import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { database, root, Territory } from "../../../utils/utils";
 import { AreaTerritory } from "../region_base";
-import { map } from "./../region/region_form";
+import { map } from "../region/region_form";
 import { CommandPermissionLevel } from "bdsx/bds/command";
 
 events.chestOpen.on(ev => {
     const player = ev.player;
-    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return CANCEL;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
     const block_position = ev.blockPos;
     const [x, z] = Territory.make_xz_chunk(block_position);
     const area_json = Territory.area_json(x, z);
@@ -23,7 +23,7 @@ events.chestOpen.on(ev => {
 
 events.blockDestroy.on(ev => {
     const player = ev.player;
-    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return CANCEL;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
     const block_position = ev.blockPos;
     const [x, z] = Territory.make_xz_chunk(block_position);
     const area_json = Territory.area_json(x, z);
@@ -39,7 +39,7 @@ events.blockDestroy.on(ev => {
 
 events.blockPlace.on(ev => {
     const player = ev.player;
-    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return CANCEL;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
     const block_position = ev.blockPos;
     const [x, z] = Territory.make_xz_chunk(block_position);
     const area_json = Territory.area_json(x, z);
