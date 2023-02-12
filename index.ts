@@ -14,4 +14,3 @@ events.serverOpen.on(() => {
     message.dos_log_server("Plugins Loaded", green);
     message.dos_space();
 });
-//
