@@ -1,10 +1,8 @@
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
-import { AreaTerritory, Utils } from "../../../utils/utils";
+import { database, root } from "../../../utils/utils";
+import { AreaTerritory } from "../region_base";
 import { map } from "./../region/region_form";
-
-const database = new Utils.Database();
-const root = new Utils.Root();
 
 events.chestOpen.on(ev => {
     const player = ev.player;
@@ -14,8 +12,8 @@ events.chestOpen.on(ev => {
     const z = Math.ceil(block_position.z / 8);
     const area_territory = new AreaTerritory(ni);
     const area_json = `${x}_${z}.json`;
-    if (database.exist_file(root.DATABASE_AREA, area_json)) {
-        const data = database.load(root.DATABASE_AREA, area_json);
+    if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
+        const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
         if (player.getNameTag() !== data._player_name) {
             return CANCEL; //남땅이면 CANCEL
         }
@@ -32,8 +30,8 @@ events.blockDestroy.on(ev => {
     const z = Math.ceil(block_position.z / 8);
     const area_territory = new AreaTerritory(ni);
     const area_json = `${x}_${z}.json`;
-    if (database.exist_file(root.DATABASE_AREA, area_json)) {
-        const data = database.load(root.DATABASE_AREA, area_json);
+    if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
+        const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
         if (player.getNameTag() !== data._player_name) {
             return CANCEL;
         }
@@ -50,8 +48,8 @@ events.blockPlace.on(ev => {
     const z = Math.ceil(block_position.z / 8);
     const area_territory = new AreaTerritory(ni);
     const area_json = `${x}_${z}.json`;
-    if (database.exist_file(root.DATABASE_AREA, area_json)) {
-        const data = database.load(root.DATABASE_AREA, area_json);
+    if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
+        const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
         if (player.getNameTag() !== data._player_name) {
             return CANCEL;
         }
