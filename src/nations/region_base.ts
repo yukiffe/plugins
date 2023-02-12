@@ -22,14 +22,15 @@ export class RegionBase {
         this._spawn_position = actor.getPosition();
     }
 
-    public add_chunk() {} //청크추가
-    public remove_chunk() {} //청크제거
+    // public add_chunk() {} //청크추가
+    // public remove_chunk() {} //청크제거
 } //나중에 absctract 추가
+
 export class AreaTerritory {
     private _x_chunk: number;
     private _z_chunk: number;
     private _dimention: DimensionId;
-    private _ni_uid: string;
+    private _xuid: string;
     private _player_name: string;
     constructor(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
@@ -39,7 +40,7 @@ export class AreaTerritory {
         this._x_chunk = Math.ceil(position.x / 8);
         this._z_chunk = Math.ceil(position.z / 8);
         this._dimention = dimention;
-        this._ni_uid = `${ni.getAddressHigh()}_${ni.getAddressLow()}`;
+        this._xuid = `${ni.getActor()?.getXuid()}`;
         this._player_name = actor.getNameTag();
     }
     get x_chunk() {
@@ -52,7 +53,7 @@ export class AreaTerritory {
         return this._dimention;
     }
     get ni() {
-        return this._ni_uid;
+        return this._xuid;
     }
     get player_name() {
         return this._player_name;

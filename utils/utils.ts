@@ -45,6 +45,7 @@ namespace Utils {
         public DATABASE_TERRITORY_PLAYERS = `${this.DATABASE_TERRITORY}/players`;
         public DATABASE_BASICITEM = `${this.DATABASE}/basic_item`;
         public DATABASE_MULTISERVER = `${this.DATABASE}/multi_server`;
+        public DATABASE_STORY = `${this.DATABASE}/story`;
     }
     export class Words {
         public CUSTOM_COMMAND_OPERATOR: string = "관리자 전용 명령어";
@@ -126,6 +127,6 @@ export namespace Territory {
         return `${x}_${z}.json`;
     }
     export function player_json(ni: NetworkIdentifier): string {
-        return `${ni.getAddressHigh}_${ni.getAddressLow}.json`;
+        return `${ni.getActor()?.getXuid()}.json`;
     }
 }
