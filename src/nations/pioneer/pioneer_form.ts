@@ -1,13 +1,9 @@
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import * as fs from "fs";
-import { AreaTerritory, Utils } from "../../../utils/utils";
-import { RegionBase } from "../region_base";
+import { chat, database, root } from "../../../utils/utils";
+import { AreaTerritory, RegionBase } from "../region_base";
 
-const root = new Utils.Root();
-const database = new Utils.Database();
-const chat = new Utils.Chat();
-//
 export class Poineer {
     static async main_menu(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
@@ -31,21 +27,21 @@ export class Poineer {
         });
         switch (res) {
             case 0:
-                if (database.exist_file(root.DATABASE_AREA, area_json)) {
-                    const data = database.load(root.DATABASE_AREA, area_json);
+                if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
+                    const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
                     actor.sendMessage(chat.mid(`${data._player_name}님의 토지입니다.`));
                 } else {
                     actor.sendMessage(chat.mid(`주인이 없는 토지입니다.`));
                 }
                 return;
             case 1:
-                if (database.exist_file(root.DATABASE_AREA, area_json)) {
-                    const data = database.load(root.DATABASE_AREA, area_json);
+                if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
+                    const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
                     actor.sendMessage(chat.mid(`§c땅 개척에 실패했습니다.`));
                     actor.sendMessage(chat.mid(`${data._player_name}님의 토지입니다.`));
                 } else {
-                    database.upload(root.DATABASE_AREA, area_json, areaTerritory);
-                    database.upload(root.DATABASE_PLAYERS, `${ni.getAddressHigh}_${ni.getAddressLow}.json`, new RegionBase(ni, areaTerritory));
+                    database.upload(root.DATABASE_TERRITORY_AREA, area_json, areaTerritory);
+                    database.upload(root.DATABASE_TERRITORY_PLAYERS, `${ni.getAddressHigh}_${ni.getAddressLow}.json`, new RegionBase(ni, areaTerritory));
                     actor.sendMessage(chat.mid(`§a새로운 땅을 개척했습니다.`));
                 }
                 return;

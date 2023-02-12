@@ -1,13 +1,8 @@
 import { Vec3 } from "bdsx/bds/blockpos";
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import * as fs from "fs";
-import { AreaTerritory, Utils } from "../../../utils/utils";
-import { RegionBase } from "../region_base";
-
-const root = new Utils.Root();
-const database = new Utils.Database();
-const chat = new Utils.Chat();
+import { chat, database, root } from "../../../utils/utils";
+import { AreaTerritory } from "../region_base";
 
 export const map = new Map<string, boolean>(); //임시용
 export class Region {
@@ -40,8 +35,8 @@ export class Region {
         });
         switch (res) {
             case 0:
-                if (database.exist_file(root.DATABASE_AREA, area_json)) {
-                    const data = database.load(root.DATABASE_AREA, area_json);
+                if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
+                    const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
                     actor.sendMessage(chat.mid(`${data._player_name}님의 토지입니다.`));
                 } else {
                     actor.sendMessage(chat.mid(`주인이 없는 토지입니다.`));
@@ -49,8 +44,8 @@ export class Region {
                 return;
             case 1:
                 if (await this.check_cancel(ni, "땅 이동")) return;
-                if (database.exist_file(root.DATABASE_PLAYERS, user_json)) {
-                    const data = database.load(root.DATABASE_PLAYERS, user_json);
+                if (database.exist_file(root.DATABASE_TERRITORY_PLAYERS, user_json)) {
+                    const data = database.load(root.DATABASE_TERRITORY_PLAYERS, user_json);
                     actor.teleport(Vec3.create(data._spawn_position));
                     actor.sendMessage(chat.mid(`${data._player_name}님의 땅으로 이동했습니다.`));
                 } else {
@@ -69,11 +64,11 @@ export class Region {
             case 3:
                 if (await this.check_cancel(ni, "땅 삭제(주의 복구불가)")) return;
                 actor.sendMessage(chat.mid("땅을 삭제했습니다."));
-                if (database.exist_file(root.DATABASE_PLAYERS, user_json)) {
-                    const data = database.load(root.DATABASE_PLAYERS, user_json);
+                if (database.exist_file(root.DATABASE_TERRITORY_PLAYERS, user_json)) {
+                    const data = database.load(root.DATABASE_TERRITORY_PLAYERS, user_json);
                     const loc = data._spawn_position;
-                    database.unlink(root.DATABASE_AREA, `${Math.ceil(loc.x / 8)}_${Math.ceil(loc.z / 8)}.json`);
-                    database.unlink(root.DATABASE_PLAYERS, user_json);
+                    database.unlink(root.DATABASE_TERRITORY_AREA, `${Math.ceil(loc.x / 8)}_${Math.ceil(loc.z / 8)}.json`);
+                    database.unlink(root.DATABASE_TERRITORY_PLAYERS, user_json);
                 }
             default:
                 actor.sendMessage(chat.mid("§c명령어가 취소되었습니다."));

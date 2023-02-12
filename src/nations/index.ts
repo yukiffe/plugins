@@ -1,19 +1,15 @@
 import { green, yellow } from "colors";
 import { existsSync, mkdirSync } from "fs";
-import { Utils } from "../../utils/utils";
+import { console_message, database, root } from "./../../utils/utils";
 
-const message = new Utils.ConsoleMessage();
-const root = new Utils.Root();
+database.create_folder_if_not_exist(root.DATABASE_TERRITORY);
 
-const database = existsSync(root.DATABASE);
-if (database == false) mkdirSync(root.DATABASE);
-
-message.dos_log_server("pioneer Loading", yellow, 2);
-import "./pioneer/pioneer";
-message.dos_log_server("pioneer Loaded", green, 2);
-message.dos_log_server("Region Loading", yellow, 2);
-import "./region/region";
-message.dos_log_server("Region Loaded", green, 2);
-message.dos_log_server("events Loading", yellow, 2);
-import "./events/events";
-message.dos_log_server("events Loaded", green, 2);
+console_message.dos_log_server("pioneer Loading", yellow, 2);
+import "./pioneer";
+console_message.dos_log_server("pioneer Loaded", green, 2);
+console_message.dos_log_server("Region Loading", yellow, 2);
+import "./region";
+console_message.dos_log_server("Region Loaded", green, 2);
+console_message.dos_log_server("events Loading", yellow, 2);
+import "./events";
+console_message.dos_log_server("events Loaded", green, 2);
