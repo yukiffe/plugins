@@ -3,6 +3,9 @@ import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { Player } from "bdsx/bds/player";
 import { Color, magenta, red, white } from "colors";
 import * as fs from "fs";
+import { Position } from "source-map";
+import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
+import { int32_t } from "bdsx/nativetype";
 
 namespace Utils {
     export class Database {
@@ -110,3 +113,9 @@ export const root = new Utils.Root();
 export const word = new Utils.Words();
 export const chat = new Utils.Chat();
 export const console_message = new Utils.ConsoleMessage();
+
+export namespace Territory {
+    function get_xz_chunk(position: BlockPos | Vec3): number[] {
+        return [Math.ceil(position.x / 8), Math.ceil(position.z / 8)];
+    }
+}
