@@ -1,16 +1,14 @@
 import { events } from "bdsx/event";
 import { green, yellow } from "colors";
-import { Utils } from "./utils/utils";
-
-const message = new Utils.ConsoleMessage();
+import { console_message, database, root } from "./utils/utils";
 
 events.serverOpen.on(() => {
-    message.dos_space();
-    message.specific("title");
-    message.specific("auther");
-    message.dos_space();
-    message.dos_log_server("Plugins Loading", yellow);
+    console_message.dos_space();
+    console_message.specific("title");
+    console_message.specific("auther");
+    console_message.dos_space();
+    console_message.dos_log_server("Plugins Loading", yellow);
     require("./src/loader");
-    message.dos_log_server("Plugins Loaded", green);
-    message.dos_space();
+    console_message.dos_log_server("Plugins Loaded", green);
+    console_message.dos_space();
 });
