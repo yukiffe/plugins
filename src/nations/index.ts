@@ -2,30 +2,28 @@ import { green, yellow } from "colors";
 import { existsSync, mkdirSync } from "fs";
 import { console_message, database, root } from "./../../utils/utils";
 import * as fs from "fs";
+import { AreaTerritory, PlayerTerritory, XuidPlayer, XZChunk } from "./region_base"; // 좀있다 수정
+import { events } from "bdsx/event";
 
 database.create_folder_if_not_exist(root.DATABASE_TERRITORY);
+database.create_folder_if_not_exist(root.DATABASE_TERRITORY_AREA);
+database.create_folder_if_not_exist(root.DATABASE_TERRITORY_PLAYERS);
 
-export const territory_areas = new Map();
-export const territory_players = new Map();
+export const territory_areas = new Map<string, AreaTerritory>();
+export const territory_players = new Map<string, PlayerTerritory>();
 
 const area_files = fs.readdirSync(root.DATABASE_TERRITORY_AREA);
 area_files.forEach(file => {
-    const data_class: AreaTerritory = database.load_object(root.DATABASE_TERRITORY, file, AreaTerritory);
-    territory_areas.set(`${data_class.x_chunk}_${data_class.z_chunk}`, data_class);
-});
-const player_files = fs.readdirSync(root.DATABASE_TERRITORY_AREA);
-player_files.forEach(file => {
-    const data_class: RegionBase = database.load_object(root.DATABASE_TERRITORY, file, RegionBase);
-    territory_players.set(`${data_class._owner_xuid}`, data_class);
+    const area_territory_class: AreaTerritory = database.load(root.DATABASE_TERRITORY_AREA, file);
+    territory_areas.set(`${area_territory_class.xz_chunk.x}_${area_territory_class.xz_chunk.z}`, area_territory_class);
 });
 
-console_message.dos_log_server("pioneer Loading", yellow, 2);
-import "./pioneer";
-console_message.dos_log_server("pioneer Loaded", green, 2);
-console_message.dos_log_server("Region Loading", yellow, 2);
-import "./region";
-console_message.dos_log_server("Region Loaded", green, 2);
+console_message.dos_log_server("nations_command Loading", yellow, 2);
+import "./nations_command";
+console_message.dos_log_server("nations_command Loaded", green, 2);
+// console_message.dos_log_server("Region Loading", yellow, 2);
+// import "./region";
+// console_message.dos_log_server("Region Loaded", green, 2);
 console_message.dos_log_server("events Loading", yellow, 2);
-import "./events/events";
-import { AreaTerritory, RegionBase } from "./region_base";
+import "./events";
 console_message.dos_log_server("events Loaded", green, 2);
