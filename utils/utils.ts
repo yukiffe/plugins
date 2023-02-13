@@ -6,7 +6,8 @@ import * as fs from "fs";
 import { Position } from "source-map";
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
 import { int32_t } from "bdsx/nativetype";
-import { AreaTerritory } from "../src/nations/region_base";
+import { AreaTerritory, RegionTerritory, XuidPlayer, XZChunk } from "../src/nations/region_base";
+import { PlayerTerritory } from "./../src/nations/region_base";
 
 namespace Utils {
     export class Database {
@@ -32,10 +33,6 @@ namespace Utils {
         };
         load(path: string, file_name: string): any {
             return JSON.parse(fs.readFileSync(`${path}/${file_name}`, "utf8"));
-        }
-        load_object(path: string, file_name: string, object: any) {
-            const json = JSON.parse(fs.readFileSync(`${path}/${file_name}`, "utf8"));
-            return Object.assign(new object(), json); //클래스 넘겨주는방법 나중에 안되면 검색해보기
         }
         upload(path: string, file_name: string, data: any): void {
             fs.writeFileSync(`${path}/${file_name}`, JSON.stringify(data), "utf8");
@@ -134,6 +131,6 @@ export namespace Maker {
         return [Math.ceil(x / 8), Math.ceil(z / 8)];
     }
     export function xz_chunk(areaTerritory: AreaTerritory): number[] {
-        return [areaTerritory.x_chunk, areaTerritory.z_chunk];
+        return [areaTerritory.xz_chunk.x, areaTerritory.xz_chunk.z];
     }
 }

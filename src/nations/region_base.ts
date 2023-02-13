@@ -1,68 +1,56 @@
-import { BlockPos, ChunkPos, Vec3 } from "bdsx/bds/blockpos";
-import { Player } from "bdsx/bds/player";
-import { bool_t } from "bdsx/nativetype";
-import { Actor, DimensionId } from "bdsx/bds/actor";
-import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { Vec3 } from "bdsx/bds/blockpos";
+import { DimensionId } from "bdsx/bds/actor";
 
 export class AreaTerritory {
-    private _x_chunk: number;
-    private _z_chunk: number;
-    private _dimention: DimensionId;
-    private _xuid: string;
-    private _player_name: string;
-    constructor(ni: NetworkIdentifier) {
-        const actor = ni.getActor()!;
-        const position = actor.getPosition();
-        const region = actor.getRegion();
-        const dimention = region.getDimensionId();
-        this._x_chunk = Math.ceil(position.x / 8);
-        this._z_chunk = Math.ceil(position.z / 8);
-        this._dimention = dimention;
-        this._xuid = `${ni.getActor()?.getXuid()}`;
-        this._player_name = actor.getNameTag();
-    }
-    get x_chunk() {
-        return this._x_chunk;
-    }
-    get z_chunk() {
-        return this._z_chunk;
-    }
-    get dimention() {
-        return this._dimention;
-    }
-    get xuid() {
-        return this._xuid;
-    }
-    get player_name() {
-        return this._player_name;
+    public player: XuidPlayer;
+    public xz_chunk: XZChunk;
+    public dimention: DimensionId;
+    constructor(player: XuidPlayer, xz_chunk: XZChunk, dimention: DimensionId) {
+        this.player = player;
+        this.xz_chunk = xz_chunk;
+        this.dimention = dimention;
     }
 }
 
 export class RegionTerritory {
-    private _area_territory: AreaTerritory[];
-    get area_territory() {
-        return this._area_territory;
+    public area_territorys: AreaTerritory[] | null;
+    public spawn_position: Vec3; //추가예정, spawn_position은  area_territorys 내에서만 가능하도록
+    constructor(area_territorys: AreaTerritory[] | null, spawn_position: Vec3) {
+        this.area_territorys = area_territorys;
+        this.spawn_position = spawn_position;
     }
 }
 
-export class RegionBase {
-    public _create_time: Date;
-    public _owner_xuid: string;
-    public _member_xuids: string[];
+export class PlayerTerritory {
+    public player: XuidPlayer;
+    public players: XuidPlayer[];
 
-    public _territory: AreaTerritory | RegionTerritory;
-    public _spawn_position: Vec3;
+    public region_territory: RegionTerritory | null;
+    public construct_time: Date;
 
-    constructor(ni: NetworkIdentifier, territory: AreaTerritory | RegionTerritory) {
-        const actor = ni.getActor()!;
-        this._create_time = new Date();
-        this._owner_xuid = actor.getXuid();
-        this._member_xuids = [actor.getXuid()];
+    constructor(player: XuidPlayer, players: XuidPlayer[], region_territory: RegionTerritory | null, construct_time: Date = new Date()) {
+        this.player = player;
+        this.players = players;
 
-        this._territory = territory;
-        this._spawn_position = actor.getPosition();
+        this.region_territory = region_territory;
+        this.construct_time = construct_time;
     }
+}
 
-    // public add_chunk() {} //청크추가
-    // public remove_chunk() {} //청크제거
-} //나중에 absctract 추가
+export class XuidPlayer {
+    public name: string;
+    public xuid: string;
+    constructor(name: string, xuid: string) {
+        this.name = name;
+        this.xuid = xuid;
+    }
+}
+
+export class XZChunk {
+    public x: number;
+    public z: number;
+    constructor(x: number, z: number) {
+        this.x = x;
+        this.z = z;
+    }
+}
