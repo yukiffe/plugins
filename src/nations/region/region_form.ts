@@ -1,17 +1,18 @@
 import { Vec3 } from "bdsx/bds/blockpos";
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { chat, database, root, Territory } from "../../../utils/utils";
-import { AreaTerritory } from "../region_base";
+import { chat, database, Maker, root } from "../../../utils/utils";
+import { AreaTerritory, RegionBase } from "../region_base";
+import { territory_areas, territory_players } from "..";
 
 export const map = new Map<string, boolean>(); //임시용
 export class Region {
     static async main_menu(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const areaTerritory = new AreaTerritory(ni);
-        const [x, z] = Territory.xz_chunk(areaTerritory);
-        const area_json = Territory.area_json(x, z);
-        const user_json = Territory.player_json(ni);
+        const [x, z] = Maker.xz_chunk(areaTerritory);
+        const area = Maker.xz_area_split(x, z);
+        const user = ni.getActor()?.getXuid();
         const res = await Form.sendTo(ni, {
             type: "form",
             title: "§l토지",
@@ -39,8 +40,8 @@ export class Region {
         });
         switch (res) {
             case 0:
-                if (database.exist_file(root.DATABASE_TERRITORY_AREA, area_json)) {
-                    const data = database.load(root.DATABASE_TERRITORY_AREA, area_json);
+                if (territory_areas.has(area)) {
+                    const data = territory_areas.get(area);
                     actor.sendMessage(chat.mid(`${data._player_name}님의 토지입니다.`));
                 } else {
                     actor.sendMessage(chat.mid(`주인이 없는 토지입니다.`));
@@ -48,8 +49,8 @@ export class Region {
                 return;
             case 1:
                 if (await this.check_cancel(ni, "땅 이동")) return;
-                if (database.exist_file(root.DATABASE_TERRITORY_PLAYERS, user_json)) {
-                    const data = database.load(root.DATABASE_TERRITORY_PLAYERS, user_json);
+                if (territory_players.has(user)) {
+                    const data = territory_players.get(user);
                     actor.teleport(Vec3.create(data._spawn_position));
                     actor.sendMessage(chat.mid(`${data._player_name}님의 땅으로 이동했습니다.`));
                 } else {
@@ -72,13 +73,13 @@ export class Region {
             case 4:
                 if (await this.check_cancel(ni, "땅 삭제(주의 복구불가)")) return;
                 actor.sendMessage(chat.mid("땅을 삭제했습니다."));
-                if (database.exist_file(root.DATABASE_TERRITORY_PLAYERS, user_json)) {
-                    const data = database.load(root.DATABASE_TERRITORY_PLAYERS, user_json);
+                if (territory_players.has(user)) {
+                    const data: RegionBase = territory_players.get(user);
                     const loc = data._spawn_position;
-                    const [x, z] = Territory.make_xz_chunk(Vec3.create(loc));
-                    const area_json = Territory.area_json(x, z);
-                    database.unlink(root.DATABASE_TERRITORY_AREA, area_json);
-                    database.unlink(root.DATABASE_TERRITORY_PLAYERS, user_json);
+                    const [x, z] = Maker.xz_process_chunk(Vec3.create(loc));
+                    const area = Maker.xz_area_split(x, z);
+                    territory_areas.delete(area);
+                    territory_players.delete(user);
                 }
                 return;
             case 5:

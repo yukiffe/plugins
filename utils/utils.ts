@@ -19,6 +19,9 @@ namespace Utils {
                 fs.writeFileSync(`${path}/${file_name}`, JSON.stringify({}));
             }
         }
+        get_folders(path: string): string[] {
+            return fs.readdirSync(path);
+        }
         exist_file = (path: string, file_name: string): boolean => {
             return fs.existsSync(`${path}/${file_name}`);
         };
@@ -29,6 +32,10 @@ namespace Utils {
         };
         load(path: string, file_name: string): any {
             return JSON.parse(fs.readFileSync(`${path}/${file_name}`, "utf8"));
+        }
+        load_object(path: string, file_name: string, object: any) {
+            const json = JSON.parse(fs.readFileSync(`${path}/${file_name}`, "utf8"));
+            return Object.assign(new object(), json); //클래스 넘겨주는방법 나중에 안되면 검색해보기
         }
         upload(path: string, file_name: string, data: any): void {
             fs.writeFileSync(`${path}/${file_name}`, JSON.stringify(data), "utf8");
@@ -116,17 +123,17 @@ export const word = new Utils.Words();
 export const chat = new Utils.Chat();
 export const console_message = new Utils.ConsoleMessage();
 
-export namespace Territory {
-    export function make_xz_chunk(position: BlockPos | Vec3): number[] {
-        return [Math.ceil(position.x / 8), Math.ceil(position.z / 8)];
+export namespace Maker {
+    export function xz_area_split(x: number, z: number): string {
+        return `${x}_${z}`;
+    }
+    export function xz_process_chunk(x: BlockPos | Vec3): number[];
+    export function xz_process_chunk(x: number, z?: number): number[];
+    export function xz_process_chunk(x: any, z?: any): any {
+        if (z === null) return [Math.ceil(x.x / 8), Math.ceil(x.z / 8)];
+        return [Math.ceil(x / 8), Math.ceil(z / 8)];
     }
     export function xz_chunk(areaTerritory: AreaTerritory): number[] {
         return [areaTerritory.x_chunk, areaTerritory.z_chunk];
-    }
-    export function area_json(x: number, z: number): string {
-        return `${x}_${z}.json`;
-    }
-    export function player_json(ni: NetworkIdentifier): string {
-        return `${ni.getActor()?.getXuid()}.json`;
     }
 }

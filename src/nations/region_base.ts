@@ -4,28 +4,6 @@ import { bool_t } from "bdsx/nativetype";
 import { Actor, DimensionId } from "bdsx/bds/actor";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 
-export class RegionBase {
-    private _create_time: Date;
-    private _owner_actor: Actor;
-    private _member_actors: Actor[];
-
-    private _territory: AreaTerritory | RegionTerritory;
-    private _spawn_position: Vec3;
-
-    constructor(ni: NetworkIdentifier, territory: AreaTerritory | RegionTerritory) {
-        const actor = ni.getActor()!;
-        this._create_time = new Date();
-        this._owner_actor = actor;
-        this._member_actors = [actor];
-
-        this._territory = territory;
-        this._spawn_position = actor.getPosition();
-    }
-
-    // public add_chunk() {} //청크추가
-    // public remove_chunk() {} //청크제거
-} //나중에 absctract 추가
-
 export class AreaTerritory {
     private _x_chunk: number;
     private _z_chunk: number;
@@ -52,7 +30,7 @@ export class AreaTerritory {
     get dimention() {
         return this._dimention;
     }
-    get ni() {
+    get xuid() {
         return this._xuid;
     }
     get player_name() {
@@ -66,3 +44,25 @@ export class RegionTerritory {
         return this._area_territory;
     }
 }
+
+export class RegionBase {
+    public _create_time: Date;
+    public _owner_xuid: string;
+    public _member_xuids: string[];
+
+    public _territory: AreaTerritory | RegionTerritory;
+    public _spawn_position: Vec3;
+
+    constructor(ni: NetworkIdentifier, territory: AreaTerritory | RegionTerritory) {
+        const actor = ni.getActor()!;
+        this._create_time = new Date();
+        this._owner_xuid = actor.getXuid();
+        this._member_xuids = [actor.getXuid()];
+
+        this._territory = territory;
+        this._spawn_position = actor.getPosition();
+    }
+
+    // public add_chunk() {} //청크추가
+    // public remove_chunk() {} //청크제거
+} //나중에 absctract 추가
