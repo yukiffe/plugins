@@ -4,6 +4,7 @@ import { events } from "bdsx/event";
 import { database, root } from "../../utils/utils";
 
 const itemStack: ItemStack[] = [];
+
 itemStack.push(ItemStack.constructWith("minecraft:stone_axe", 1, 0));
 itemStack.push(ItemStack.constructWith("minecraft:stone_shovel", 1, 0));
 itemStack.push(ItemStack.constructWith("minecraft:stone_pickaxe", 1, 0));
