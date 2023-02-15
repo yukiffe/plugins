@@ -9,7 +9,7 @@ database.create_folder_if_not_exist(root.DATABASE_STORY);
 export const story = new Map<string, StoryBase>();
 const story_files = fs.readdirSync(root.DATABASE_STORY);
 story_files.forEach(file => {
-    const story_class: StoryBase = database.load(root.DATABASE_TERRITORY_AREA, file);
+    const story_class: StoryBase = database.load(root.DATABASE_STORY, file);
     story.set(`${story_class.player.xuid}`, story_class);
 });
 

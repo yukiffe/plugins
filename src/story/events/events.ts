@@ -49,7 +49,7 @@ events.blockDestroy.on(ev => {
     const item_name = ev.blockSource.getBlock(ev.blockPos).getDescriptionId();
     let weight = tile_weight.get(item_name)!;
     if (weight === undefined) {
-        player.sendMessage("추가되지 않은 아이템, 관리자에게 요청해주세요.");
+        player.sendActionbar("추가되지 않은 아이템, 관리자에게 요청해주세요.(다음업데이트에 반영)");
         return;
     }
     weight -= weight / 100; //0.01이하로는 안떨어지게 나중에 코드 수정
@@ -80,6 +80,9 @@ events.serverClose.on(() => {
 });
 
 function fairy_tale_ratio_func(player: Player, likelihood: number, weight: number): number {
-    player.runCommand(`titleraw @s actionbar{"rawtext":[{"text":"개연성 [${Math.round(likelihood * 100) / 100}] + ${Math.round(weight * 100) / 100}"}]}`);
+    player
+        .getNetworkIdentifier()
+        .getActor()!
+        .sendActionbar(`개연성 [${Math.round(likelihood * 100) / 100}] + ${Math.round(weight * 100) / 100}`);
     return likelihood + weight;
 }

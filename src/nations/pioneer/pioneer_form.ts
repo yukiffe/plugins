@@ -50,6 +50,7 @@ export class Poineer {
 
                     territory_areas.set(xz_split, area_territory!); //새로운 땅 생성
                     data_player_territory.region_territory = region_territory; //값 변경
+                    territory_players.set(xuid, data_player_territory);
                     // territory_players.set(xuid, data_player_territory); //플레이어 정보 업데이트
 
                     actor.sendMessage(chat.mid(`§a새로운 토지를 개척했습니다.`));

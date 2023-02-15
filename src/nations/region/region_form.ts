@@ -110,15 +110,29 @@ export class Region {
                 }
                 return;
             case 3: //초대
-                const owner_player = territory_players.get(area_territory.player.xuid);
-                const invite_xuid_player: XuidPlayer | null = await this.is_xuid_player(ni);
-                //자기자신or있던유저는 초대 x
-                if (invite_xuid_player === null) {
-                    actor.sendMessage("초대실패");
-                } else {
-                    owner_player?.players.push(invite_xuid_player);
-                    actor.sendMessage("초대성공");
+                const owner_player = territory_players.get(xuid)!;
+                if (owner_player?.region_territory === null) {
+                    actor.sendMessage("땅이 없습니다.");
+                    return;
                 }
+                const input_form = new CustomForm("초대", [new FormInput("플레이어의 아이디를 적어주세요", "")]);
+                input_form.sendTo(ni, (form, target) => {
+                    const playerMap = bedrockServer.serverInstance.getPlayers();
+                    playerMap.forEach(player => {
+                        if ("" + form.response === player.getNameTag()) {
+                            const invite_xuid_player = new XuidPlayer(player.getNameTag(), player.getXuid());
+                            if (owner_player!.players.find(item => item.xuid === player.getXuid())) {
+                                actor.sendMessage("이미 초대된 플레이어입니다.");
+                                return;
+                            }
+                            owner_player?.players.push(invite_xuid_player);
+                            territory_players.set(xuid, owner_player);
+                            actor.sendMessage("초대성공");
+                            return;
+                        }
+                    });
+                    actor.sendMessage("초대 실패");
+                });
                 return;
             case 4:
                 if (data_player_territory.region_territory === null) {
@@ -204,17 +218,7 @@ export class Region {
         else return true;
     }
     static async is_xuid_player(ni: NetworkIdentifier): Promise<XuidPlayer | null> {
-        const input_form = new CustomForm("초대", [new FormInput("플레이어의 아이디를 적어주세요", "")]);
-        input_form.sendTo(ni, (form, target) => {
-            const playerMap = bedrockServer.serverInstance.getPlayers();
-            playerMap.forEach(player => {
-                ni.getActor()?.sendMessage(player.getNameTag());
-                ni.getActor()?.sendMessage(form.response);
-                if (form.response === player.getNameTag()) {
-                    return new XuidPlayer(player.getName(), player.getXuid());
-                }
-            });
-        });
+        //
         return null;
     }
 }

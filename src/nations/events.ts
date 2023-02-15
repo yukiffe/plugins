@@ -55,7 +55,7 @@ events.chestOpen.on(ev => {
         return; //땅주의 구성원이면
     }
 
-    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory}§l§4님의 토지에 대한 권한이 없습니다.`);
+    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory.player.name}§l§4님의 토지에 대한 권한이 없습니다.`);
     return CANCEL; //남땅이면 CANCEL
 });
 
@@ -66,6 +66,9 @@ events.blockDestroy.on(ev => {
     const block_position = ev.blockPos;
     const [x, z] = Maker.xz_process_chunk(block_position);
     const xz_split = Maker.xz_area_split(x, z);
+
+    console.log(x + "" + z);
+    console.log(xz_split);
 
     const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
     if (area_territory === undefined) return;
@@ -78,7 +81,7 @@ events.blockDestroy.on(ev => {
         return; //땅주의 구성원이면
     }
 
-    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory}§l§4님의 토지에 대한 권한이 없습니다.`);
+    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory.player.name}§l§4님의 토지에 대한 권한이 없습니다.`);
     return CANCEL; //남땅이면 CANCEL
 });
 
@@ -101,6 +104,6 @@ events.blockPlace.on(ev => {
         return; //땅주의 구성원이면
     }
 
-    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory}§l§4님의 토지에 대한 권한이 없습니다.`);
+    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory.player.name}§l§4님의 토지에 대한 권한이 없습니다.`);
     return CANCEL; //남땅이면 CANCEL
 });

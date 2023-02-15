@@ -125,11 +125,9 @@ export namespace Maker {
     export function xz_area_split(x: number, z: number): string {
         return `${x}_${z}`;
     }
-    export function xz_process_chunk(x: BlockPos | Vec3): number[];
-    export function xz_process_chunk(x: number, z?: number): number[];
-    export function xz_process_chunk(x: any, z?: any): any {
-        if (z === null) return [Math.ceil(x.x / 8), Math.ceil(x.z / 8)];
-        return [Math.ceil(x / 8), Math.ceil(z / 8)];
+    export function xz_process_chunk(x: number | BlockPos | Vec3, z?: number): number[] {
+        if (typeof x === "number") return [Math.ceil(x / 8), Math.ceil(z! / 8)];
+        return [Math.ceil(x.x / 8), Math.ceil(x.z / 8)];
     }
     export function xz_chunk(areaTerritory: AreaTerritory): number[] {
         return [areaTerritory.xz_chunk.x, areaTerritory.xz_chunk.z];
