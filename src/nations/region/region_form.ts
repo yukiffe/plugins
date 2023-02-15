@@ -5,7 +5,6 @@ import { territory_areas, territory_players } from "..";
 import { chat, database, Maker, root } from "../../../utils/utils";
 import { AreaTerritory, PlayerTerritory, RegionTerritory, XuidPlayer } from "../region_base";
 import { XZChunk } from "./../region_base";
-import { BlockSource } from "bdsx/bds/block";
 import { bedrockServer } from "bdsx/launcher";
 
 function interval(callback: () => void, time: number) {
@@ -40,6 +39,11 @@ export class Region {
         const data_area_territory: AreaTerritory | undefined = territory_areas.get(xz_split); //플레이어위치의 territory
         const data_player_territory: PlayerTerritory = territory_players.get(xuid)!; //플레이어 정보
 
+        if (data_player_territory.region_territory === null) {
+            actor.sendMessage("땅없음");
+            return;
+        }
+
         const res = await Form.sendTo(ni, {
             type: "form",
             title: "§l토지",
@@ -58,10 +62,10 @@ export class Region {
                     text: "§l§f토지 초대",
                 },
                 {
-                    text: "§l§f토지 확장(추가예정기능)",
+                    text: "§l§f토지 확장",
                 },
                 {
-                    text: "§l§3토지 설정", //스폰포인트변경, 블럭파괴,설치허용/비허용
+                    text: "§l§3토지 스폰포인트 설정(임시기능)", //스폰포인트변경, 블럭파괴,설치허용/비허용
                 },
                 {
                     text: "§l§c토지 삭제",
@@ -78,10 +82,12 @@ export class Region {
                 return;
             case 1: //이동
                 if (await this.check_cancel(ni, "토지 이동", "토지로 이동하시겠습니까?")) return;
-                if (data_player_territory.region_territory?.area_territorys === null) {
+                if (data_player_territory.region_territory === null) {
                     actor.sendMessage(chat.mid(`소유중인 토지가 존재하지 않습니다.`));
                 } else {
                     //리스트 form 만들기 나중에
+                    actor.sendMessage(data_player_territory?.region_territory?.spawn_position!.toString());
+                    actor.sendMessage(data_player_territory?.region_territory?.dimention_id!.toString());
                     actor.teleport(Vec3.create(data_player_territory?.region_territory?.spawn_position!), data_player_territory.region_territory?.dimention_id);
                     actor.sendMessage(chat.mid(`${data_player_territory?.player.name}님의 토지로 이동했습니다.`));
                 }
@@ -119,7 +125,7 @@ export class Region {
                     actor.sendMessage(chat.mid(`소유중인 토지가 없습니다.`));
                     return;
                 }
-                if (data_player_territory.region_territory?.area_territorys!.length > 4) {
+                if (data_player_territory.region_territory?.area_territorys!.length >= 4) {
                     actor.sendMessage("땅의 최대 개수는 4개입니다.(임시)");
                     actor.sendMessage("땅의 위치를 바꾸려면 땅 제거 후 다시 생성");
                     return;
@@ -157,10 +163,20 @@ export class Region {
                 //     territory_players.delete(user);
                 // }
                 return;
-            case 5: //설정
-                actor.sendMessage(chat.mid("추가중인 기능입니다."));
+            case 5: //스폰포인트 변경
+                if (data_area_territory!.player.xuid === xuid) {
+                    data_player_territory.region_territory.spawn_position = position;
+                    actor.sendMessage(chat.mid("§f스폰포인트 변경"));
+                } else {
+                    actor.sendMessage("스폰포인트 변경 실패: 자신의 땅 위에서 정해주세요");
+                }
                 return;
             case 6: //삭제
+                if (await this.check_cancel(ni, "토지 삭제", "주의: 복구불가")) return;
+                for (const area_territory of data_player_territory.region_territory.area_territorys!) {
+                    territory_areas.delete(`${area_territory.xz_chunk.x}_${area_territory.xz_chunk.z}`);
+                }
+                data_player_territory.region_territory = null;
                 return;
             default:
                 actor.sendMessage(chat.mid("§c명령어가 취소되었습니다."));
@@ -192,8 +208,10 @@ export class Region {
         input_form.sendTo(ni, (form, target) => {
             const playerMap = bedrockServer.serverInstance.getPlayers();
             playerMap.forEach(player => {
+                ni.getActor()?.sendMessage(player.getNameTag());
+                ni.getActor()?.sendMessage(form.response);
                 if (form.response === player.getNameTag()) {
-                    return new XuidPlayer(player.getNameTag(), player.getXuid());
+                    return new XuidPlayer(player.getName(), player.getXuid());
                 }
             });
         });

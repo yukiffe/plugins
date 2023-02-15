@@ -15,16 +15,15 @@ command.register("토지", word.CUSTOM_COMMAND_NORMAL).overload(
         const ni = sender.getNetworkIdentifier();
         const actor = ni.getActor()!;
         const xuid = actor.getXuid();
-        if (territory_players.get(xuid)?.region_territory === null || param.command === "개척") {
+        if (territory_players.get(xuid)?.region_territory === null) {
             Poineer.form(ni);
         } else {
             Region.main_menu(ni);
-            // actor.sendActionbar(chat.mid("준비중"));
         }
         return;
     },
     {
-        command: [command.enum("action:command", "개척"), true],
+        // command: [command.enum("action:command", "개척"), true],
     },
 );
 

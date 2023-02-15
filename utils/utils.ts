@@ -50,6 +50,7 @@ namespace Utils {
         public DATABASE_BASICITEM = `${this.DATABASE}/basic_item`;
         public DATABASE_MULTISERVER = `${this.DATABASE}/multi_server`;
         public DATABASE_STORY = `${this.DATABASE}/story`;
+        public DATABASE_STORY_ITEMS = `${this.DATABASE}/story/items`;
     }
     export class Words {
         public CUSTOM_COMMAND_OPERATOR: string = "관리자 전용 명령어";

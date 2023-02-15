@@ -4,9 +4,11 @@ import { DimensionId } from "bdsx/bds/actor";
 export class AreaTerritory {
     public player: XuidPlayer;
     public xz_chunk: XZChunk;
-    constructor(player: XuidPlayer, xz_chunk: XZChunk) {
+    public likelihood: number;
+    constructor(player: XuidPlayer, xz_chunk: XZChunk, likelihood: number = 0) {
         this.player = player;
         this.xz_chunk = xz_chunk;
+        this.likelihood = likelihood;
     }
 }
 
@@ -52,5 +54,22 @@ export class XZChunk {
     constructor(x: number, z: number) {
         this.x = x;
         this.z = z;
+    }
+}
+
+export class ConstPosition {
+    public x: number;
+    public y: number;
+    public z: number;
+    constructor(x: number | Vec3, y?: number, z?: number) {
+        if (typeof x === "number") {
+            this.x = Math.ceil(x);
+            this.y = Math.ceil(y!);
+            this.z = Math.ceil(z!);
+        } else {
+            this.x = Math.ceil(x.x);
+            this.y = Math.ceil(x.y);
+            this.z = Math.ceil(x.z);
+        }
     }
 }

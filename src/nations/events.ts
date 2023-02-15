@@ -30,53 +30,77 @@ events.serverClose.on(() => {
         database.upload(root.DATABASE_TERRITORY_AREA, `${key}.json`, value);
     });
     territory_players.forEach((value: any, key: any) => {
+        console.log(key);
+        console.log(value);
         database.upload(root.DATABASE_TERRITORY_PLAYERS, `${key}.json`, value);
     });
 });
 
-// events.chestOpen.on(ev => {
-//     const player = ev.player;
-//     if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
-//     const block_position = ev.blockPos;
-//     const [x, z] = Maker.xz_process_chunk(block_position);
-//     const area_json = Maker.xz_area_split(x, z);
-//     if (territory_areas.has(area_json)) {
-//         const data: AreaTerritory = territory_areas.get(area_json);
-//         if (player.getXuid() !== data.xuid) {
-//             return CANCEL; //남땅이면 CANCEL
-//         }
-//     } else {
-//         if (map[player.getNameTag()] == true) return CANCEL; //내땅아니면 CANCEL(조건)
-//     }
-// });
+events.chestOpen.on(ev => {
+    const player = ev.player;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
 
-// events.blockDestroy.on(ev => {
-//     const player = ev.player;
-//     if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
-//     const block_position = ev.blockPos;
-//     const [x, z] = Maker.xz_process_chunk(block_position);
-//     const area_json = Maker.xz_area_split(x, z);
-//     if (territory_areas.has(area_json)) {
-//         const data: AreaTerritory = territory_areas.get(area_json);
-//         if (player.getXuid() !== data.xuid) {
-//             return CANCEL; //남땅이면 CANCEL
-//         }
-//         if (map[player.getNameTag()] == true) return CANCEL; //내땅아니면 CANCEL(조건)
-//     }
-// });
+    const block_position = ev.blockPos;
+    const [x, z] = Maker.xz_process_chunk(block_position);
+    const xz_split = Maker.xz_area_split(x, z);
 
-// events.blockPlace.on(ev => {
-//     const player = ev.player;
-//     if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
-//     const block_position = ev.blockPos;
-//     const [x, z] = Maker.xz_process_chunk(block_position);
-//     const area_json = Maker.xz_area_split(x, z);
-//     if (territory_areas.has(area_json)) {
-//         const data: AreaTerritory = territory_areas.get(area_json);
-//         if (player.getXuid() !== data.xuid) {
-//             return CANCEL; //남땅이면 CANCEL
-//         }
-//     } else {
-//         if (map[player.getNameTag()] == true) return CANCEL; //내땅아니면 CANCEL(조건)
-//     }
-// });
+    const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
+    if (area_territory === undefined) return; //주인없으면
+
+    if (player.getXuid() === area_territory.player.xuid) {
+        return; //주인이면
+    }
+    const owner_player_territory: PlayerTerritory = territory_players.get(area_territory?.player.xuid)!;
+    if (owner_player_territory.players.find(item => item.xuid === player.getXuid())) {
+        return; //땅주의 구성원이면
+    }
+
+    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory}§l§4님의 토지에 대한 권한이 없습니다.`);
+    return CANCEL; //남땅이면 CANCEL
+});
+
+events.blockDestroy.on(ev => {
+    const player = ev.player;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const block_position = ev.blockPos;
+    const [x, z] = Maker.xz_process_chunk(block_position);
+    const xz_split = Maker.xz_area_split(x, z);
+
+    const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
+    if (area_territory === undefined) return;
+
+    if (player.getXuid() === area_territory.player.xuid) {
+        return; //주인이면
+    }
+    const owner_player_territory: PlayerTerritory = territory_players.get(area_territory?.player.xuid)!;
+    if (owner_player_territory.players.find(item => item.xuid === player.getXuid())) {
+        return; //땅주의 구성원이면
+    }
+
+    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory}§l§4님의 토지에 대한 권한이 없습니다.`);
+    return CANCEL; //남땅이면 CANCEL
+});
+
+events.blockPlace.on(ev => {
+    const player = ev.player;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const block_position = ev.blockPos;
+    const [x, z] = Maker.xz_process_chunk(block_position);
+    const xz_split = Maker.xz_area_split(x, z);
+
+    const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
+    if (area_territory === undefined) return;
+
+    if (player.getXuid() === area_territory.player.xuid) {
+        return; //주인이면
+    }
+    const owner_player_territory: PlayerTerritory = territory_players.get(area_territory?.player.xuid)!;
+    if (owner_player_territory.players.find(item => item.xuid === player.getXuid())) {
+        return; //땅주의 구성원이면
+    }
+
+    player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory}§l§4님의 토지에 대한 권한이 없습니다.`);
+    return CANCEL; //남땅이면 CANCEL
+});
