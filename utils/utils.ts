@@ -56,14 +56,6 @@ namespace Utils {
         public CUSTOM_COMMAND_OPERATOR: string = "관리자 전용 명령어";
         public CUSTOM_COMMAND_NORMAL: string = "유저 전용 명령어";
     }
-    export class Chat {
-        begin(command: string) {
-            return ` §l§f[${command}]`;
-        }
-        mid(message: string) {
-            return `§l§f${message}`;
-        }
-    }
     export class Initials {
         private _title: string;
         private _keyword: string;
@@ -118,7 +110,6 @@ namespace Utils {
 export const database = new Utils.Database();
 export const root = new Utils.Root();
 export const word = new Utils.Words();
-export const chat = new Utils.Chat();
 export const console_message = new Utils.ConsoleMessage();
 
 export namespace Maker {

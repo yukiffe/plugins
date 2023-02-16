@@ -1,6 +1,6 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { XuidPlayer } from "./nations/region_base";
-import { database } from "../utils/utils";
+import { XuidPlayer } from "../nations/region_base";
+import { database } from "../../utils/utils";
 
 export class StoryBase {
     public player: XuidPlayer;
