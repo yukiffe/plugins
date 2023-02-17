@@ -2,7 +2,7 @@ import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { bool_t } from "bdsx/nativetype";
 import * as fs from "fs";
-import { territory_players, territory_areas } from "..";
+import { territory_players, territory_areas, territory_regions } from "..";
 import { database, Maker, root } from "../../../utils/utils";
 import { Region } from "../region/region_form";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "../territory_base";
@@ -94,10 +94,11 @@ export class Poineer {
             actor.sendMessage("§l§c타인의 토지와 너무 가까워 개척할 수 없습니다.");
             return;
         }
-        const area_territory_player_name = "§l§fㄴ";
+        // const area_territory_player_name = "§l§f";
         const res = await Form.sendTo(ni, {
             type: "form",
-            title: `§l§l${area_territory_player_name}`,
+            // title: `§l§l${area_territory_player_name}`,
+            title: "",
             content: "새로운 기록을 작성합니다.",
             buttons: [
                 {
@@ -110,11 +111,12 @@ export class Poineer {
         });
         switch (res) {
             case 0:
-                const area_territory = new TerritoryArea(player_name_xuid, chunk); //새로운 AreaTerritory클래스, 생성시 사용
-                const region_territory = new TerritoryRegion(player_name_xuid, chunk, [area_territory.chunk.get_dxz_chunk_line()], player_name_xuid.name, 0, 0, 0);
+                const area_territory = new TerritoryArea(player_name_xuid, chunk);
+                territory_areas.set(area_territory.chunk.get_dxz_chunk_line(), area_territory);
+                const region_territory = new TerritoryRegion(player_name_xuid, chunk, [area_territory.chunk.get_dxz_chunk_line()], `${name}_region`);
+                territory_regions.set(region_territory.region_name, region_territory);
+                data_player_territory.belong_region = `${name}_region`;
 
-                territory_areas.set(chunk.get_dxz_chunk_line(), area_territory!); //새로운 땅 생성
-                data_player_territory.belong_region = `${name}`; //값 변경
                 actor.sendMessage(`§l§e새로운 토지를 개척했습니다.`);
                 return;
             case 1:

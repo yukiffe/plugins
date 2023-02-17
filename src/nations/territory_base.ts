@@ -48,7 +48,6 @@ export class Value {
     }
 }
 
-
 export class TerritoryArea {
     public owner: PlayerNameXuid;
     public chunk: Chunk;
@@ -59,20 +58,20 @@ export class TerritoryArea {
     }
 }
 
-/**개인 클래스  */
+/**토지 클래스  */
 export class TerritoryRegion extends Value {
     public owner: PlayerNameXuid;
     public spawn_position: Chunk;
 
     public area_territorys: string[];
-    public name: string;
+    public region_name: string;
 
-    constructor(owner: PlayerNameXuid, spawn_position: Chunk, area_territorys: string[], name: string, money = 0, assimilate = 0, deposit = 0) {
+    constructor(owner: PlayerNameXuid, spawn_position: Chunk, area_territorys: string[], region_name: string, money = 0, assimilate = 0, deposit = 0) {
         super(money, assimilate, deposit);
         this.owner = owner;
         this.spawn_position = spawn_position;
         this.area_territorys = area_territorys;
-        this.name = name;
+        this.region_name = region_name;
     }
 }
 
@@ -83,14 +82,14 @@ export class TerritoryVillage extends Value {
     public spawn_position: Chunk;
 
     public region_territorys: string[];
-    public name: string;
+    public village_name: string;
 
     constructor(
         owner: PlayerNameXuid,
         members: PlayerNameXuid[],
         spawn_position: Chunk,
         region_territorys: string[],
-        name: string,
+        village_name: string,
         money = 0,
         assimilate = 0,
         deposit = 0,
@@ -100,7 +99,7 @@ export class TerritoryVillage extends Value {
         this.members = members;
         this.spawn_position = spawn_position;
         this.region_territorys = region_territorys;
-        this.name = name;
+        this.village_name = village_name;
     }
 }
 
@@ -111,14 +110,14 @@ export class TerritoryCountry extends Value {
     public spawn_position: Chunk;
 
     public village_territorys: string[];
-    public name: string;
+    public country_name: string;
 
     constructor(
         owner: PlayerNameXuid,
         members: PlayerNameXuid[],
         spawn_position: Chunk,
         village_territorys: string[],
-        name: string,
+        country_name: string,
         money = 0,
         assimilate = 0,
         deposit = 0,
@@ -128,20 +127,22 @@ export class TerritoryCountry extends Value {
         this.members = members;
         this.spawn_position = spawn_position;
         this.village_territorys = village_territorys;
-        this.name = name;
+        this.country_name = country_name;
     }
 }
-
 
 //개인 디비
 export class TerritoryPlayer extends Value {
     public owner: PlayerNameXuid;
-    public belong_region: string | null;
-    public belong_village: string | null;
-    public belong_country: string | null;
+    public friends: PlayerNameXuid[];
+
+    public belong_region: string | null; //player name_region
+    public belong_village: string | null; //player name_village
+    public belong_country: string | null; //player_name_country
 
     constructor(
         player_name_xuid: PlayerNameXuid,
+        friends_name_xuid: PlayerNameXuid[] = [],
         money = 0,
         assimilate = 0,
         deposit = 0,
@@ -151,6 +152,7 @@ export class TerritoryPlayer extends Value {
     ) {
         super(money, assimilate, deposit);
         this.owner = player_name_xuid;
+        this.friends = friends_name_xuid;
         this.belong_region = belong_region;
         this.belong_village = belong_village;
         this.belong_country = belong_country;

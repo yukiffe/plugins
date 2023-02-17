@@ -2,11 +2,10 @@ import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { CommandPermissionLevel } from "bdsx/bds/command";
 import { database, Maker, root } from "../../utils/utils";
-import { territory_areas, territory_players } from ".";
+import { territory_areas, territory_regions, territory_countrys, territory_players, territory_villages } from ".";
 import { PlayerNameXuid, TerritoryPlayer } from "./territory_base";
 
-territory_areas;
-territory_players;
+//interval로 sidebar에 현재 위치 국가 or 장소 주인 띄울 수 잇도록 만들기
 
 events.playerJoin.on(ev => {
     const player = ev.player;
@@ -30,7 +29,24 @@ events.playerLeft.on(ev => {
 
 events.serverClose.on(() => {
     territory_areas.forEach((value: any, key: any) => {
+        console.log(key);
+        console.log(value);
         database.upload(root.DATABASE_TERRITORY_AREA, `${key}.json`, value);
+    });
+    territory_regions.forEach((value: any, key: any) => {
+        console.log(key);
+        console.log(value);
+        database.upload(root.DATABASE_TERRITORY_REGION, `${key}.json`, value);
+    });
+    territory_villages.forEach((value: any, key: any) => {
+        console.log(key);
+        console.log(value);
+        database.upload(root.DATABASE_TERRITORY_VILLAGE, `${key}.json`, value);
+    });
+    territory_countrys.forEach((value: any, key: any) => {
+        console.log(key);
+        console.log(value);
+        database.upload(root.DATABASE_TERRITORY_COUNTRY, `${key}.json`, value);
     });
     territory_players.forEach((value: any, key: any) => {
         console.log(key);
