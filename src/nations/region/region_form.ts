@@ -3,8 +3,8 @@ import { CustomForm, Form, FormButton, FormInput, SimpleForm } from "bdsx/bds/fo
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { territory_areas, territory_players } from "..";
 import { database, Maker, root } from "../../../utils/utils";
-import { AreaTerritory, PlayerTerritory, RegionTerritory, XuidPlayer } from "../region_base";
-import { XZChunk } from "./../region_base";
+import { AreaTerritory, TerritoryPlayer, RegionTerritory, XuidPlayer } from "../territory_base";
+import { XZChunk } from "../territory_base";
 import { bedrockServer } from "bdsx/launcher";
 
 export class Region {
@@ -24,7 +24,7 @@ export class Region {
         const region_territory = new RegionTerritory([area_territory], position, dimention);
 
         const data_area_territory: AreaTerritory | undefined = territory_areas.get(xz_split); //플레이어위치의 territory
-        const data_player_territory: PlayerTerritory = territory_players.get(xuid)!; //플레이어 정보
+        const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!; //플레이어 정보
 
         if (data_player_territory.region_territory === null) {
             actor.sendMessage("§l§c토지가 존재하지 않습니다.");
@@ -133,8 +133,8 @@ export class Region {
                                     return;
                                 }
                             }
-                            if (database.exist_file(root.DATABASE_TERRITORY_PLAYERS, `${xuid}.json`)) {
-                                const data_area_owner_territory = database.load(root.DATABASE_TERRITORY_PLAYERS, `${xuid}.json`);
+                            if (database.exist_file(root.DATABASE_TERRITORY_PLAYER, `${xuid}.json`)) {
+                                const data_area_owner_territory = database.load(root.DATABASE_TERRITORY_PLAYER, `${xuid}.json`);
                                 if (data_area_owner_territory?.players.find(item => item.xuid === xuid)) {
                                     actor.sendMessage("§l§c타인과 너무 가까워 토지를 확장할 수 없습니다.");
                                     return;

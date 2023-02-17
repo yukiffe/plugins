@@ -6,8 +6,8 @@ import * as fs from "fs";
 import { Position } from "source-map";
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
 import { int32_t } from "bdsx/nativetype";
-import { AreaTerritory, RegionTerritory, XuidPlayer, XZChunk } from "../src/nations/region_base";
-import { PlayerTerritory } from "./../src/nations/region_base";
+import { AreaTerritory, RegionTerritory, XuidPlayer, XZChunk } from "../src/nations/territory_base";
+import { TerritoryPlayer } from "../src/nations/territory_base";
 
 namespace Utils {
     export class Database {
@@ -46,7 +46,9 @@ namespace Utils {
         public DATABASE_TERRITORY = `${this.DATABASE}/territory`;
         public DATABASE_TERRITORY_AREA = `${this.DATABASE_TERRITORY}/area`;
         public DATABASE_TERRITORY_REGION = `${this.DATABASE_TERRITORY}/region`;
-        public DATABASE_TERRITORY_PLAYERS = `${this.DATABASE_TERRITORY}/players`;
+        public DATABASE_TERRITORY_VILLAGE = `${this.DATABASE_TERRITORY}/village`;
+        public DATABASE_TERRITORY_COUNTRY = `${this.DATABASE_TERRITORY}/country`;
+        public DATABASE_TERRITORY_PLAYER = `${this.DATABASE_TERRITORY}/players`;
         public DATABASE_BASICITEM = `${this.DATABASE}/basic_item`;
         public DATABASE_MULTISERVER = `${this.DATABASE}/multi_server`;
         public DATABASE_STORY = `${this.DATABASE}/story`;
@@ -113,7 +115,7 @@ export const word = new Utils.Words();
 export const console_message = new Utils.ConsoleMessage();
 
 export namespace Maker {
-    export function xz_area_split(x: number, z: number): string {
+    export function xz_area_line(x: number, z: number): string {
         return `${x}_${z}`;
     }
     export function xz_process_chunk(x: number | BlockPos | Vec3, z?: number): number[] {
