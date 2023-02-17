@@ -3,33 +3,20 @@ import { CustomForm, Form, FormButton, FormInput, SimpleForm } from "bdsx/bds/fo
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { territory_areas, territory_players } from "..";
 import { database, Maker, root } from "../../../utils/utils";
-import { AreaTerritory, TerritoryPlayer, RegionTerritory, XuidPlayer } from "../territory_base";
-import { XZChunk } from "../territory_base";
 import { bedrockServer } from "bdsx/launcher";
+import { Chunk, PlayerNameXuid, TerritoryPlayer } from "../territory_base";
 
 export class Region {
-    static async main_menu(ni: NetworkIdentifier) {
+    static async form(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
-        const position = actor.getPosition();
         const xuid = actor.getXuid();
         const name = actor.getNameTag();
+        const player_name_xuid = new PlayerNameXuid(name, xuid);
+        const position = actor.getPosition();
+        const dimention_id = actor.getDimensionId();
+        const chunk = new Chunk(position.x, position.z, dimention_id);
 
-        const xuid_player = new XuidPlayer(name, xuid);
-        const [x, z] = Maker.xz_process_chunk(position.x, position.z);
-        const y = position.y;
-        const xz_split = Maker.xz_area_split(x, z);
-        const xz_chunk = new XZChunk(x, z);
-        const dimention = actor.getDimensionId();
-        const area_territory = new AreaTerritory(xuid_player, xz_chunk); //새로운 AreaTerritory클래스, 생성시 사용
-        const region_territory = new RegionTerritory([area_territory], position, dimention);
-
-        const data_area_territory: AreaTerritory | undefined = territory_areas.get(xz_split); //플레이어위치의 territory
-        const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!; //플레이어 정보
-
-        if (data_player_territory.region_territory === null) {
-            actor.sendMessage("§l§c토지가 존재하지 않습니다.");
-            return;
-        }
+        const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!;
 
         const res = await Form.sendTo(ni, {
             type: "form",
