@@ -17,7 +17,7 @@ events.playerJoin.on(ev => {
         const data_player_territory: TerritoryPlayer = database.load(root.DATABASE_TERRITORY_PLAYER, `${xuid}.json`);
         territory_players.set(`${xuid}`, data_player_territory);
     } else {
-        territory_players.set(`${xuid}`, new TerritoryPlayer(player_name_xuid, 0, 0, 0, null));
+        territory_players.set(`${xuid}`, new TerritoryPlayer(player_name_xuid));
     }
 });
 

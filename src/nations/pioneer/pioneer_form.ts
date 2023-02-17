@@ -63,10 +63,7 @@ export class Poineer {
         const dimention_id = actor.getDimensionId();
         const chunk = new Chunk(position.x, position.z, dimention_id);
 
-        const data_player_territory: TerritoryPlayer | undefined = territory_players.get(xuid);
-        if (data_player_territory === undefined) return;
-        const data_belong = data_player_territory.belong;
-        let data_territory: undefined | TerritoryRegion | TerritoryVillage | TerritoryCountry;
+        const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!;
 
         if (is_current_area(chunk)) {
             const data_area_territory_player_name = `§l§f주인이 있는 토지입니다.`;
@@ -114,10 +111,10 @@ export class Poineer {
         switch (res) {
             case 0:
                 const area_territory = new TerritoryArea(player_name_xuid, chunk); //새로운 AreaTerritory클래스, 생성시 사용
-                const region_territory = new TerritoryRegion(player_name_xuid, chunk, [area_territory], player_name_xuid.name, 0, 0, 0);
+                const region_territory = new TerritoryRegion(player_name_xuid, chunk, [area_territory.chunk.get_dxz_chunk_line()], player_name_xuid.name, 0, 0, 0);
 
                 territory_areas.set(chunk.get_dxz_chunk_line(), area_territory!); //새로운 땅 생성
-                data_player_territory.belong = `@region@${name}`; //값 변경
+                data_player_territory.belong_region = `${name}`; //값 변경
                 actor.sendMessage(`§l§e새로운 토지를 개척했습니다.`);
                 return;
             case 1:
