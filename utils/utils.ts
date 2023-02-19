@@ -5,9 +5,7 @@ import { Color, magenta, red, white } from "colors";
 import * as fs from "fs";
 import { Position } from "source-map";
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
-import { int32_t } from "bdsx/nativetype";
-import { AreaTerritory, RegionTerritory, XuidPlayer, XZChunk } from "../src/nations/territory_base";
-import { TerritoryPlayer } from "../src/nations/territory_base";
+import { TerritoryArea } from "../src/nations/territory_base";
 
 namespace Utils {
     export class Database {
@@ -27,9 +25,10 @@ namespace Utils {
             return fs.existsSync(`${path}/${file_name}`);
         };
         unlink = (path: string, file_name: string) => {
-            fs.unlink(`${path}/${file_name}`, err => {
-                if (err) throw err;
-            });
+            if (this.exist_file(path, file_name))
+                fs.unlink(`${path}/${file_name}`, err => {
+                    if (err) throw err;
+                });
         };
         load(path: string, file_name: string): any {
             return JSON.parse(fs.readFileSync(`${path}/${file_name}`, "utf8"));
@@ -119,10 +118,10 @@ export namespace Maker {
         return `${x}_${z}`;
     }
     export function xz_process_chunk(x: number | BlockPos | Vec3, z?: number): number[] {
-        if (typeof x === "number") return [Math.ceil(x / 8), Math.ceil(z! / 8)];
-        return [Math.ceil(x.x / 8), Math.ceil(x.z / 8)];
+        if (typeof x === "number") return [Math.floor(x / 8), Math.floor(z! / 8)];
+        return [Math.floor(x.x / 8), Math.floor(x.z / 8)];
     }
-    export function xz_chunk(areaTerritory: AreaTerritory): number[] {
-        return [areaTerritory.xz_chunk.x, areaTerritory.xz_chunk.z];
+    export function xz_chunk(areaTerritory: TerritoryArea): number[] {
+        return [areaTerritory.chunk.chunk_x, areaTerritory.chunk.chunk_z];
     }
 }

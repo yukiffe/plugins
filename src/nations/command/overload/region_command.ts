@@ -1,6 +1,6 @@
 import { territory_countrys, territory_players, territory_villages } from "../..";
 import { Maker } from "../../../../utils/utils";
-import territory from "../register/pioneer_territory";
+import territory from "../register/region_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { territory_regions } from "./../../index";
 import { Poineer } from "../../pioneer/pioneer_form";
@@ -16,7 +16,7 @@ territory.overload(
         const player_name_xuid = new PlayerNameXuid(name, xuid);
         const position = actor.getPosition();
         const dimention_id = actor.getDimensionId();
-        const chunk = new Chunk(position.x, position.z, dimention_id);
+        const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
         const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!;
         const belong_region: string | null = data_player_territory.belong_region;

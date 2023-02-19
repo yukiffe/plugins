@@ -12,16 +12,18 @@ export class PlayerNameXuid {
 
 export class Chunk {
     public x: number;
+    public y: number;
     public z: number;
     public chunk_x: number;
     public chunk_z: number;
     public dimention_id: DimensionId;
 
-    constructor(x: number, z: number, dimention_id: DimensionId) {
+    constructor(x: number, y: number, z: number, dimention_id: DimensionId) {
         this.x = x;
+        this.y = y;
         this.z = z;
-        this.chunk_x = Math.ceil(x / 8);
-        this.chunk_z = Math.ceil(z / 8);
+        this.chunk_x = Math.floor(x / 8);
+        this.chunk_z = Math.floor(z / 8);
         this.dimention_id = dimention_id;
     }
 
@@ -30,6 +32,9 @@ export class Chunk {
     }
     public get_dxz_chunk(): number[] {
         return [this.dimention_id, this.chunk_x, this.chunk_z];
+    }
+    public get_dxyz(): number[] {
+        return [this.dimention_id, this.x, this.y, this.z];
     }
     public get_dxz_chunk_line(): string {
         return `${this.dimention_id}_${this.chunk_x}_${this.chunk_z}`;

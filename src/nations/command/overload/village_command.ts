@@ -1,9 +1,10 @@
 import { territory_countrys, territory_players, territory_villages } from "../..";
 import { Maker } from "../../../../utils/utils";
-import territory from "../register/pioneer_territory";
+import territory from "../register/village_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { territory_regions } from "./../../index";
 import { Poineer } from "../../pioneer/pioneer_form";
+import { Region } from "../../region/region_form";
 
 territory.overload(
     async (params, origin, output) => {
@@ -18,13 +19,12 @@ territory.overload(
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
         const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!;
-        const belong_region: string | null = data_player_territory.belong_region;
+        const belong_village: string | null = data_player_territory.belong_village;
 
-        if (belong_region === null) {
-            Poineer.form(ni);
+        if (belong_village === null) {
+            // Region.form(ni);//토지있는플레이어
         } else {
-            actor.sendMessage("§l§c토지가 이미 존재합니다.");
-            actor.sendMessage("§l§e/토지");
+            //토지없는플레이어폼
         }
     },
     {
