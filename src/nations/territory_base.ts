@@ -39,13 +39,16 @@ export class Chunk {
     public get_dxyz_round(): number[] {
         return [this.dimention_id, Math.round(this.x * 10) / 10, Math.round(this.y * 10) / 10, Math.round(this.z * 10) / 10];
     }
+    public get_dxyz_round_split(char: string): string {
+        return this.get_dxyz_round().join(char);
+    }
     public get_dxz_chunk_line(): string {
         return `${this.dimention_id}_${this.chunk_x}_${this.chunk_z}`;
     }
 }
 
 export class Value {
-    public money: number;
+    public money: number; //100D = 100S = 100G fog mist haze
     public assimilate: number;
     public deposit: number;
 
@@ -57,12 +60,12 @@ export class Value {
 }
 
 export class TerritoryArea {
-    public region_name: string | null;
-    public village_name: string | null;
-    public country_name: string | null;
+    public region_name: string | null; //name_region
+    public village_name: string | null; //name_village
+    public country_name: string | null; //name_country
     public chunk: Chunk;
 
-    constructor(chunk: Chunk, region_name: string | null, village_name: string | null = null, country_name: string | null = null) {
+    constructor(chunk: Chunk, region_name: string | null, village_name: string | null, country_name: string | null) {
         this.chunk = chunk;
         this.region_name = region_name;
         this.village_name = village_name;
@@ -145,6 +148,7 @@ export class TerritoryCountry extends Value {
 
 //개인 디비
 export class TerritoryPlayer extends Value {
+    public ban: Boolean;
     public owner: PlayerNameXuid;
     public friends: PlayerNameXuid[];
 
@@ -153,6 +157,7 @@ export class TerritoryPlayer extends Value {
     public belong_country: string | null; //player_name_country
 
     constructor(
+        ban: Boolean,
         player_name_xuid: PlayerNameXuid,
         friends_name_xuid: PlayerNameXuid[] = [],
         money = 0,
@@ -163,6 +168,7 @@ export class TerritoryPlayer extends Value {
         belong_country: string | null = null,
     ) {
         super(money, assimilate, deposit);
+        this.ban = ban;
         this.owner = player_name_xuid;
         this.friends = friends_name_xuid;
         this.belong_region = belong_region;

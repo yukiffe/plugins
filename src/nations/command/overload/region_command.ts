@@ -1,5 +1,4 @@
 import { territory_countrys, territory_players, territory_villages } from "../..";
-import { Maker } from "../../../../utils/utils";
 import territory from "../register/region_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { territory_regions } from "./../../index";

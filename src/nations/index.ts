@@ -2,13 +2,14 @@ import { green, yellow } from "colors";
 import { console_message, database, root } from "./../../utils/utils";
 import * as fs from "fs";
 import { TerritoryPlayer, TerritoryArea, TerritoryCountry, TerritoryRegion, TerritoryVillage, PlayerNameXuid, Chunk } from "./territory_base";
+import { StoryBase } from "../story_base";
 
-database.create_folder_if_not_exist(root.DATABASE_TERRITORY);
-database.create_folder_if_not_exist(root.DATABASE_TERRITORY_AREA);
-database.create_folder_if_not_exist(root.DATABASE_TERRITORY_REGION);
-database.create_folder_if_not_exist(root.DATABASE_TERRITORY_VILLAGE);
-database.create_folder_if_not_exist(root.DATABASE_TERRITORY_COUNTRY);
-database.create_folder_if_not_exist(root.DATABASE_TERRITORY_PLAYER);
+database.create_folder_if_not_exist(root.DATABASE_NATIONS);
+database.create_folder_if_not_exist(root.DATABASE_NATIONS_AREA);
+database.create_folder_if_not_exist(root.DATABASE_NATIONS_REGION);
+database.create_folder_if_not_exist(root.DATABASE_NATIONS_VILLAGE);
+database.create_folder_if_not_exist(root.DATABASE_NATIONS_COUNTRY);
+database.create_folder_if_not_exist(root.DATABASE_PLAYER);
 
 export const territory_areas = new Map<string, TerritoryArea>();
 export const territory_regions = new Map<string, TerritoryRegion>();
@@ -17,9 +18,9 @@ export const territory_countrys = new Map<string, TerritoryCountry>();
 export const territory_players = new Map<string, TerritoryPlayer>();
 
 //Area
-const area_files = fs.readdirSync(root.DATABASE_TERRITORY_AREA);
+const area_files = fs.readdirSync(root.DATABASE_NATIONS_AREA);
 area_files.forEach(file => {
-    const data_area_territory_json: TerritoryArea = database.load(root.DATABASE_TERRITORY_AREA, file);
+    const data_area_territory_json: TerritoryArea = database.load(root.DATABASE_NATIONS_AREA, file);
     const data_chunk = new Chunk(
         data_area_territory_json.chunk.x,
         data_area_territory_json.chunk.y,
@@ -37,9 +38,9 @@ area_files.forEach(file => {
 });
 
 //Region
-const region_files = fs.readdirSync(root.DATABASE_TERRITORY_REGION);
+const region_files = fs.readdirSync(root.DATABASE_NATIONS_REGION);
 region_files.forEach(file => {
-    const data_region_territory_json: TerritoryRegion = database.load(root.DATABASE_TERRITORY_REGION, file);
+    const data_region_territory_json: TerritoryRegion = database.load(root.DATABASE_NATIONS_REGION, file);
     const data_owner_name_xuid = new PlayerNameXuid(data_region_territory_json.owner.name, data_region_territory_json.owner.xuid);
     const data_chunk = new Chunk(
         data_region_territory_json.spawn_position.x,
@@ -60,9 +61,9 @@ region_files.forEach(file => {
     territory_regions.set(`${data_region_territory.region_name}`, data_region_territory);
 });
 //Village
-const village_files = fs.readdirSync(root.DATABASE_TERRITORY_VILLAGE);
+const village_files = fs.readdirSync(root.DATABASE_NATIONS_VILLAGE);
 village_files.forEach(file => {
-    const data_village_territory_json: TerritoryVillage = database.load(root.DATABASE_TERRITORY_VILLAGE, file);
+    const data_village_territory_json: TerritoryVillage = database.load(root.DATABASE_NATIONS_VILLAGE, file);
     const data_owner_name_xuid = new PlayerNameXuid(data_village_territory_json.owner.name, data_village_territory_json.owner.xuid);
     const data_members_name_xuid = data_village_territory_json.members.map(member => new PlayerNameXuid(member.name, member.xuid));
     const data_chunk = new Chunk(
@@ -85,9 +86,9 @@ village_files.forEach(file => {
     territory_villages.set(`${data_village_territory.village_name}`, data_village_territory);
 });
 //Country
-const country_files = fs.readdirSync(root.DATABASE_TERRITORY_COUNTRY);
+const country_files = fs.readdirSync(root.DATABASE_NATIONS_COUNTRY);
 country_files.forEach(file => {
-    const data_country_territory_json: TerritoryCountry = database.load(root.DATABASE_TERRITORY_COUNTRY, file);
+    const data_country_territory_json: TerritoryCountry = database.load(root.DATABASE_NATIONS_COUNTRY, file);
     const data_owner_name_xuid = new PlayerNameXuid(data_country_territory_json.owner.name, data_country_territory_json.owner.xuid);
     const data_members_name_xuid = data_country_territory_json.members.map(member => new PlayerNameXuid(member.name, member.xuid));
     const data_chunk = new Chunk(
@@ -111,12 +112,13 @@ country_files.forEach(file => {
 });
 
 //Player
-const player_files = fs.readdirSync(root.DATABASE_TERRITORY_PLAYER);
+const player_files = fs.readdirSync(root.DATABASE_PLAYER);
 player_files.forEach(file => {
-    const data_player_territory_json: TerritoryPlayer = database.load(root.DATABASE_TERRITORY_PLAYER, file);
+    const data_player_territory_json: TerritoryPlayer = database.load(root.DATABASE_PLAYER, file);
     const data_owner_name_xuid = new PlayerNameXuid(data_player_territory_json.owner.name, data_player_territory_json.owner.xuid);
     const data_members_name_xuid = data_player_territory_json.friends.map(friend => new PlayerNameXuid(friend.name, friend.xuid));
     const data_player_territory = new TerritoryPlayer(
+        data_player_territory_json.ban,
         data_owner_name_xuid,
         data_members_name_xuid,
         data_player_territory_json.money,
@@ -145,7 +147,6 @@ console_message.dos_log_server("scoreboard Loading", yellow, 2);
 import "./scoreboard";
 console_message.dos_log_server("scoreboard Loaded", green, 2);
 
-import { StoryBase } from "../story_base";
 database.create_folder_if_not_exist(root.DATABASE_STORY);
 
 export const story = new Map<string, StoryBase>();
@@ -156,5 +157,5 @@ story_files.forEach(file => {
 });
 
 console_message.dos_log_server("events Loading", yellow, 2);
-import "./events";
+import "./events/events";
 console_message.dos_log_server("events Loaded", green, 2);

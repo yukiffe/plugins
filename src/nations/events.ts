@@ -11,11 +11,11 @@ events.playerJoin.on(ev => {
     const name = player.getNameTag();
     const xuid = player.getXuid();
     const player_name_xuid = new PlayerNameXuid(name, xuid);
-    if (database.exist_file(root.DATABASE_TERRITORY_PLAYER, `${xuid}.json`)) {
-        const data_player_territory: TerritoryPlayer = database.load(root.DATABASE_TERRITORY_PLAYER, `${xuid}.json`);
+    if (database.exist_file(root.DATABASE_PLAYER, `${xuid}.json`)) {
+        const data_player_territory: TerritoryPlayer = database.load(root.DATABASE_PLAYER, `${xuid}.json`);
         territory_players.set(`${xuid}`, data_player_territory);
     } else {
-        territory_players.set(`${xuid}`, new TerritoryPlayer(player_name_xuid));
+        territory_players.set(`${xuid}`, new TerritoryPlayer(false, player_name_xuid));
     }
 });
 //들어오고 나갈때 동화율 조정
@@ -26,7 +26,7 @@ events.playerJoin.on(ev => {
 events.playerLeft.on(ev => {
     const player = ev.player;
     const xuid = player.getXuid();
-    database.upload(root.DATABASE_TERRITORY_PLAYER, `${xuid}.json`, territory_players.get(xuid));
+    database.upload(root.DATABASE_PLAYER, `${xuid}.json`, territory_players.get(xuid));
     territory_players.delete(xuid);
 });
 
@@ -34,27 +34,27 @@ events.serverClose.on(() => {
     territory_areas.forEach((value: any, key: any) => {
         console.log(key);
         console.log(value);
-        database.upload(root.DATABASE_TERRITORY_AREA, `${key}.json`, value);
+        database.upload(root.DATABASE_NATIONS_AREA, `${key}.json`, value);
     });
     territory_regions.forEach((value: any, key: any) => {
         console.log(key);
         console.log(value);
-        database.upload(root.DATABASE_TERRITORY_REGION, `${key}.json`, value);
+        database.upload(root.DATABASE_NATIONS_REGION, `${key}.json`, value);
     });
     territory_villages.forEach((value: any, key: any) => {
         console.log(key);
         console.log(value);
-        database.upload(root.DATABASE_TERRITORY_VILLAGE, `${key}.json`, value);
+        database.upload(root.DATABASE_NATIONS_VILLAGE, `${key}.json`, value);
     });
     territory_countrys.forEach((value: any, key: any) => {
         console.log(key);
         console.log(value);
-        database.upload(root.DATABASE_TERRITORY_COUNTRY, `${key}.json`, value);
+        database.upload(root.DATABASE_NATIONS_COUNTRY, `${key}.json`, value);
     });
     territory_players.forEach((value: any, key: any) => {
         console.log(key);
         console.log(value);
-        database.upload(root.DATABASE_TERRITORY_PLAYER, `${key}.json`, value);
+        database.upload(root.DATABASE_PLAYER, `${key}.json`, value);
     });
 });
 

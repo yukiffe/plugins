@@ -38,20 +38,20 @@ namespace Utils {
         }
     }
     export class Root {
+        DATABASE_TERRITORY(DATABASE_TERRITORY: any) {
+            throw new Error("Method not implemented.");
+        }
         DATABASE_AREA(DATABASE_AREA: any, area_json: string) {
             throw new Error("Method not implemented.");
         }
         public DATABASE = "../database";
-        public DATABASE_TERRITORY = `${this.DATABASE}/territory`;
-        public DATABASE_TERRITORY_AREA = `${this.DATABASE_TERRITORY}/area`;
-        public DATABASE_TERRITORY_REGION = `${this.DATABASE_TERRITORY}/region`;
-        public DATABASE_TERRITORY_VILLAGE = `${this.DATABASE_TERRITORY}/village`;
-        public DATABASE_TERRITORY_COUNTRY = `${this.DATABASE_TERRITORY}/country`;
-        public DATABASE_TERRITORY_PLAYER = `${this.DATABASE_TERRITORY}/players`;
-        public DATABASE_BASICITEM = `${this.DATABASE}/basic_item`;
-        public DATABASE_MULTISERVER = `${this.DATABASE}/multi_server`;
+        public DATABASE_NATIONS = `${this.DATABASE}/nations`;
+        public DATABASE_NATIONS_AREA = `${this.DATABASE_NATIONS}/area`;
+        public DATABASE_NATIONS_REGION = `${this.DATABASE_NATIONS}/region`;
+        public DATABASE_NATIONS_VILLAGE = `${this.DATABASE_NATIONS}/village`;
+        public DATABASE_NATIONS_COUNTRY = `${this.DATABASE_NATIONS}/country`;
+        public DATABASE_PLAYER = `${this.DATABASE}/players`;
         public DATABASE_STORY = `${this.DATABASE}/story`;
-        public DATABASE_STORY_ITEMS = `${this.DATABASE}/story/items`;
     }
     export class Words {
         public CUSTOM_COMMAND_OPERATOR: string = "관리자 전용 명령어";

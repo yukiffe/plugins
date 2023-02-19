@@ -1,10 +1,7 @@
 import { territory_countrys, territory_players, territory_villages } from "../..";
-import { Maker } from "../../../../utils/utils";
 import territory from "../register/village_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { territory_regions } from "./../../index";
-import { Poineer } from "../../form/pioneer_form";
-import { Region } from "../../form/region_form";
 import { Village } from "../../form/village_form";
 
 territory.overload(
