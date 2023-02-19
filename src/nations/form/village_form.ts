@@ -2,7 +2,7 @@ import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 
 export class Village {
-    static async exist_form(ni: NetworkIdentifier) {
+    static async not_exist_form(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const res = await Form.sendTo(ni, {
             type: "form",
@@ -31,7 +31,7 @@ export class Village {
         }
         return;
     }
-    static async not_exist_form(ni: NetworkIdentifier) {
+    static async exist_form(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const res = await Form.sendTo(ni, {
             type: "form",
@@ -52,6 +52,9 @@ export class Village {
                 },
                 {
                     text: "마을 추방",
+                },
+                {
+                    text: "마을 설정", //마을 이름 변경 등
                 },
                 {
                     text: "§l§c취소",

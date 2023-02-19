@@ -1,7 +1,7 @@
-import { territory_countrys, territory_players, territory_villages } from "../..";
+import { nations_countrys, nations_players, nations_villages } from "../..";
 import territory from "../register/village_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
-import { territory_regions } from "./../../index";
+import { nations_regions } from "./../../index";
 import { Village } from "../../form/village_form";
 
 territory.overload(
@@ -16,7 +16,7 @@ territory.overload(
         const dimention_id = actor.getDimensionId();
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
-        const data_player_territory: TerritoryPlayer = territory_players.get(xuid)!;
+        const data_player_territory: TerritoryPlayer = nations_players.get(xuid)!;
         const belong_village: string | null = data_player_territory.belong_village;
 
         if (belong_village === null) {

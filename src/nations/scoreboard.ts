@@ -4,8 +4,9 @@ import { Scoreboard } from "bdsx/bds/scoreboard";
 import { command } from "bdsx/command";
 import { events } from "bdsx/event";
 import * as fs from "fs";
-import { territory_areas } from ".";
+import { nations_areas } from ".";
 import { Chunk } from "./territory_base";
+import { nations_players } from "./index";
 
 const players = new Map<NetworkIdentifier, ServerPlayer>();
 
@@ -22,7 +23,7 @@ const intrval = setInterval(() => {
         const position = player.getPosition();
         const dimention_id = player.getDimensionId();
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
-        const area_territory = territory_areas.get(chunk.get_dxz_chunk_line());
+        const area_territory = nations_areas.get(chunk.get_dxz_chunk_line());
 
         type ScoreLine = [string, number];
         let newline: ScoreLine = ["§l§7", 0];
@@ -35,7 +36,7 @@ const intrval = setInterval(() => {
             scoreboard.lines.push(["§l§7미개척지", 2]);
         } else {
             if (area_territory.region_name !== null) {
-                scoreboard.lines.push([`§l§8토지: ${area_territory?.region_name}`, 2]);
+                scoreboard.lines.push([`§l§8토지: ${nations_players.get(area_territory.region_name!)?.owner.name}`, 2]);
             }
             if (area_territory.village_name !== null) {
                 scoreboard.lines.push([`§l§8마을: ${area_territory?.village_name}`, 2]);
