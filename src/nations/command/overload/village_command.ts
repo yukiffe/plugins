@@ -3,8 +3,9 @@ import { Maker } from "../../../../utils/utils";
 import territory from "../register/village_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { territory_regions } from "./../../index";
-import { Poineer } from "../../pioneer/pioneer_form";
-import { Region } from "../../region/region_form";
+import { Poineer } from "../../form/pioneer_form";
+import { Region } from "../../form/region_form";
+import { Village } from "../../form/village_form";
 
 territory.overload(
     async (params, origin, output) => {
@@ -22,8 +23,10 @@ territory.overload(
         const belong_village: string | null = data_player_territory.belong_village;
 
         if (belong_village === null) {
+            Village.not_exist_form(ni);
             // Region.form(ni);//토지있는플레이어
         } else {
+            Village.exist_form(ni);
             //토지없는플레이어폼
         }
     },

@@ -20,14 +20,19 @@ export const territory_players = new Map<string, TerritoryPlayer>();
 const area_files = fs.readdirSync(root.DATABASE_TERRITORY_AREA);
 area_files.forEach(file => {
     const data_area_territory_json: TerritoryArea = database.load(root.DATABASE_TERRITORY_AREA, file);
-    const data_owner_name_xuid = new PlayerNameXuid(data_area_territory_json.owner.name, data_area_territory_json.owner.xuid);
     const data_chunk = new Chunk(
         data_area_territory_json.chunk.x,
         data_area_territory_json.chunk.y,
         data_area_territory_json.chunk.z,
         data_area_territory_json.chunk.dimention_id,
     );
-    const data_area_territory = new TerritoryArea(data_owner_name_xuid, data_chunk);
+    // const data_region_owner = new PlayerNameXuid(data_area_territory_json.region_owner?.name,data_area_territory_json.region_owner?.xuid);
+    const data_area_territory = new TerritoryArea(
+        data_chunk,
+        data_area_territory_json.region_name,
+        data_area_territory_json.village_name,
+        data_area_territory_json.country_name,
+    );
     territory_areas.set(`${data_area_territory.chunk.get_dxz_chunk_line()}`, data_area_territory);
 });
 
@@ -124,15 +129,32 @@ player_files.forEach(file => {
     territory_players.set(`${data_player_territory.owner.xuid}`, data_player_territory);
 });
 
-console_message.dos_log_server("nations_command1 Loading", yellow, 2);
+console_message.dos_log_server("nations_command 1 Loading", yellow, 2);
 import "./command/overload/pioneer_command";
-console_message.dos_log_server("nations_command1 Loaded", green, 2);
-console_message.dos_log_server("nations_command2 Loading", yellow, 2);
+console_message.dos_log_server("nations_command 1 Loaded", green, 2);
+console_message.dos_log_server("nations_command 2 Loading", yellow, 2);
 import "./command/overload/region_command";
-console_message.dos_log_server("nations_command2 Loaded", green, 2);
-console_message.dos_log_server("nations_command3 Loading", yellow, 2);
+console_message.dos_log_server("nations_command 2 Loaded", green, 2);
+console_message.dos_log_server("nations_command 3 Loading", yellow, 2);
 import "./command/overload/village_command";
-console_message.dos_log_server("nations_command3 Loaded", green, 2);
+console_message.dos_log_server("nations_command 3 Loaded", green, 2);
+console_message.dos_log_server("events Loading", yellow, 2);
+import "./events";
+console_message.dos_log_server("events Loaded", green, 2);
+console_message.dos_log_server("scoreboard Loading", yellow, 2);
+import "./scoreboard";
+console_message.dos_log_server("scoreboard Loaded", green, 2);
+
+import { StoryBase } from "../story_base";
+database.create_folder_if_not_exist(root.DATABASE_STORY);
+
+export const story = new Map<string, StoryBase>();
+const story_files = fs.readdirSync(root.DATABASE_STORY);
+story_files.forEach(file => {
+    const story_class: StoryBase = database.load(root.DATABASE_STORY, file);
+    story.set(`${story_class.player.xuid}`, story_class);
+});
+
 console_message.dos_log_server("events Loading", yellow, 2);
 import "./events";
 console_message.dos_log_server("events Loaded", green, 2);

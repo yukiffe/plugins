@@ -1,11 +1,10 @@
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { CommandPermissionLevel } from "bdsx/bds/command";
-import { database, Maker, root } from "../../utils/utils";
+import { database, root } from "../../utils/utils";
 import { territory_areas, territory_regions, territory_countrys, territory_players, territory_villages } from ".";
-import { PlayerNameXuid, TerritoryPlayer } from "./territory_base";
-
-//interval로 sidebar에 현재 위치 국가 or 장소 주인 띄울 수 잇도록 만들기
+import { Chunk, PlayerNameXuid, TerritoryArea, TerritoryPlayer, Value } from "./territory_base";
+import region_territory from "./command/register/region_territory";
 
 events.playerJoin.on(ev => {
     const player = ev.player;
@@ -19,7 +18,11 @@ events.playerJoin.on(ev => {
         territory_players.set(`${xuid}`, new TerritoryPlayer(player_name_xuid));
     }
 });
-
+//들어오고 나갈때 동화율 조정
+/*
+ 1. 들어와있을때
+ 2. 나가있을때
+*/
 events.playerLeft.on(ev => {
     const player = ev.player;
     const xuid = player.getXuid();
@@ -55,74 +58,81 @@ events.serverClose.on(() => {
     });
 });
 
-// events.chestOpen.on(ev => {
-//     const player = ev.player;
-//     if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
-
-//     const block_position = ev.blockPos;
-//     const [x, z] = Maker.xz_process_chunk(block_position);
-//     const xz_split = Maker.xz_area_split(x, z);
-
-//     const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
-//     if (area_territory === undefined) return; //주인없으면
-
-//     if (player.getXuid() === area_territory.player.xuid) {
-//         return; //주인이면
-//     }
-//     const owner_player_territory: TerritoryPlayer = territory_players.get(area_territory?.player.xuid)!;
-//     if (owner_player_territory.players.find(item => item.xuid === player.getXuid())) {
-//         return; //땅주의 구성원이면
-//     }
-
-//     player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory.player.name}§l§4님의 토지에 대한 권한이 없습니다.`);
-//     return CANCEL; //남땅이면 CANCEL
-// });
-
 // events.blockDestroy.on(ev => {
+//     const itemStack = ev.itemStack;
 //     const player = ev.player;
-//     if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+//     const ni = player.getNetworkIdentifier();
 
-//     const block_position = ev.blockPos;
-//     const [x, z] = Maker.xz_process_chunk(block_position);
-//     const xz_split = Maker.xz_area_split(x, z);
+//     const data_story = story.get(player.getXuid());
 
-//     console.log(x + "" + z);
-//     console.log(xz_split);
-
-//     const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
-//     if (area_territory === undefined) return;
-
-//     if (player.getXuid() === area_territory.player.xuid) {
-//         return; //주인이면
+//     const item_name = ev.blockSource.getBlock(ev.blockPos).getDescriptionId();
+//     let weight = tile_weight.get(item_name)!;
+//     if (weight === undefined) {
+//         player.sendActionbar("추가되지 않은 아이템, 관리자에게 요청해주세요.(다음업데이트에 반영)");
+//         return;
 //     }
-//     const owner_player_territory: TerritoryPlayer = territory_players.get(area_territory?.player.xuid)!;
-//     if (owner_player_territory.players.find(item => item.xuid === player.getXuid())) {
-//         return; //땅주의 구성원이면
-//     }
-
-//     player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory.player.name}§l§4님의 토지에 대한 권한이 없습니다.`);
-//     return CANCEL; //남땅이면 CANCEL
+//     weight -= weight / 100; //0.01이하로는 안떨어지게 나중에 코드 수정
+//     data_story!.likelihood += weight;
+//     tile_weight.set(item_name, weight);
+//     fairy_tale_ratio_func(player, data_story?.likelihood!, weight);
 // });
 
-// events.blockPlace.on(ev => {
-//     const player = ev.player;
-//     if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+events.blockInteractedWith.on(ev => {
+    ev.player!.getNetworkIdentifier().getActor()?.sendMessage("TEST3");
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
 
-//     const block_position = ev.blockPos;
-//     const [x, z] = Maker.xz_process_chunk(block_position);
-//     const xz_split = Maker.xz_area_split(x, z);
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
 
-//     const area_territory: AreaTerritory | undefined = territory_areas.get(xz_split);
-//     if (area_territory === undefined) return;
+    const area_territory: TerritoryArea | undefined = territory_areas.get(chunk.get_dxz_chunk_line());
+    const player_territory: TerritoryPlayer | undefined = territory_players.get(player.getXuid())!;
 
-//     if (player.getXuid() === area_territory.player.xuid) {
-//         return; //주인이면
-//     }
-//     const owner_player_territory: TerritoryPlayer = territory_players.get(area_territory?.player.xuid)!;
-//     if (owner_player_territory.players.find(item => item.xuid === player.getXuid())) {
-//         return; //땅주의 구성원이면
-//     }
+    if (area_territory === undefined) return; //미선언
 
-//     player.getNetworkIdentifier().getActor()?.sendMessage(`${area_territory.player.name}§l§4님의 토지에 대한 권한이 없습니다.`);
-//     return CANCEL; //남땅이면 CANCEL
-// });
+    const region_territory = territory_regions.get(area_territory.region_name!)!;
+    // if (region_territory === undefined) return; //여기코드바꾸기
+    // if (xuid === region_territory?.owner.xuid) {
+    //     return; //내가 땅 주인이면
+    // }
+    //땅주, 마을주, 성주 3가지 다 확인하기
+    //땅이 없으면 건너뛰기
+    const owner_player_territory = territory_players.get(region_territory?.owner.xuid!)!;
+    // if (owner_player_territory?.friends.find(item => item.xuid === region_territory?.owner.xuid)) {
+    //     return;
+    // }
+
+    if (player_territory?.deposit >= 50) {
+        if (player_territory.assimilate >= 3) {
+            if (!attacking.has(chunk.get_dxz_chunk_line())) {
+                const attack = new Attack(0, 64, 0);
+                territory_regions.set(region_territory?.region_name!, region_territory);
+                attacking.set(chunk.get_dxz_chunk_line(), attack);
+            }
+            const attack = attacking.get(chunk.get_dxz_chunk_line())!;
+            attack.assimilate -= 1;
+            player_territory.assimilate -= 3;
+            attacking.set(chunk.get_dxz_chunk_line(), attack);
+            territory_players.set(player_territory.owner.xuid, player_territory);
+            player.getNetworkIdentifier().getActor()?.sendActionbar(`Block 개연성: ${attack.assimilate}(-1)\nPlayer 개연성: ${player_territory.assimilate}(-3)`);
+        }
+    }
+    // player.getNetworkIdentifier().getActor()?.sendMessage(`${region_territory?.owner.name}§l§4님의 상자에 대한 권한이 없습니다.`);
+    //때리기 64
+    //개연성 172
+    return CANCEL; //남땅이면 CANCEL
+});
+//상자는 캔슬안됌 => 따로따로만들기
+
+// const attacking = new Map<string, >();
+
+class Attack extends Value {
+    constructor(money = 0, assimilate = 0, deposit = 0) {
+        super(money, assimilate, deposit);
+    }
+}
+
+export const attacking = new Map<string, Attack>();

@@ -3,8 +3,8 @@ import { Maker } from "../../../../utils/utils";
 import territory from "../register/region_territory";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { territory_regions } from "./../../index";
-import { Poineer } from "../../pioneer/pioneer_form";
-import { Region } from "../../region/region_form";
+import { Poineer } from "../../form/pioneer_form";
+import { Region } from "../../form/region_form";
 
 territory.overload(
     async (params, origin, output) => {

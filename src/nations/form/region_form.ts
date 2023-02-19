@@ -2,7 +2,7 @@ import { Vec3 } from "bdsx/bds/blockpos";
 import { CustomForm, Form, FormButton, FormInput, SimpleForm } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { territory_areas, territory_players, territory_regions } from "..";
-import { database, Maker, root } from "../../../utils/utils";
+import { database, root } from "../../../utils/utils";
 import { bedrockServer } from "bdsx/launcher";
 import { Chunk, PlayerNameXuid, TerritoryArea, TerritoryPlayer } from "../territory_base";
 import { command } from "bdsx/command";
@@ -174,7 +174,7 @@ export class Region {
             if (around_area === undefined) {
                 continue;
             }
-            if (around_area?.owner.xuid === xuid) {
+            if (around_area?.region_name === xuid) {
                 check = true;
             }
         }
@@ -191,7 +191,7 @@ export class Region {
             if (around_area === undefined) {
                 continue;
             }
-            if (around_area?.owner.xuid !== xuid) {
+            if (around_area?.region_name !== xuid) {
                 check = true;
             }
         }
@@ -200,7 +200,7 @@ export class Region {
             return;
         }
 
-        const new_area_territory = new TerritoryArea(new PlayerNameXuid(name, xuid), chunk);
+        const new_area_territory = new TerritoryArea(chunk, xuid, null, null);
 
         territory_areas.set(chunk.get_dxz_chunk_line(), new_area_territory);
         data_region_territory.area_territorys.push(chunk.get_dxz_chunk_line());

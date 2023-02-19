@@ -112,16 +112,3 @@ export const database = new Utils.Database();
 export const root = new Utils.Root();
 export const word = new Utils.Words();
 export const console_message = new Utils.ConsoleMessage();
-
-export namespace Maker {
-    export function xz_area_line(x: number, z: number): string {
-        return `${x}_${z}`;
-    }
-    export function xz_process_chunk(x: number | BlockPos | Vec3, z?: number): number[] {
-        if (typeof x === "number") return [Math.floor(x / 8), Math.floor(z! / 8)];
-        return [Math.floor(x.x / 8), Math.floor(x.z / 8)];
-    }
-    export function xz_chunk(areaTerritory: TerritoryArea): number[] {
-        return [areaTerritory.chunk.chunk_x, areaTerritory.chunk.chunk_z];
-    }
-}

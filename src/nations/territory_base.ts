@@ -36,6 +36,9 @@ export class Chunk {
     public get_dxyz(): number[] {
         return [this.dimention_id, this.x, this.y, this.z];
     }
+    public get_dxyz_round(): number[] {
+        return [this.dimention_id, Math.round(this.x * 10) / 10, Math.round(this.y * 10) / 10, Math.round(this.z * 10) / 10];
+    }
     public get_dxz_chunk_line(): string {
         return `${this.dimention_id}_${this.chunk_x}_${this.chunk_z}`;
     }
@@ -54,12 +57,16 @@ export class Value {
 }
 
 export class TerritoryArea {
-    public owner: PlayerNameXuid;
+    public region_name: string | null;
+    public village_name: string | null;
+    public country_name: string | null;
     public chunk: Chunk;
 
-    constructor(owner: PlayerNameXuid, chunk: Chunk) {
-        this.owner = owner;
+    constructor(chunk: Chunk, region_name: string | null, village_name: string | null = null, country_name: string | null = null) {
         this.chunk = chunk;
+        this.region_name = region_name;
+        this.village_name = village_name;
+        this.country_name = country_name;
     }
 }
 
