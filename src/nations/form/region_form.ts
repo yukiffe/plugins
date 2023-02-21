@@ -1,22 +1,27 @@
-import { Vec3 } from "bdsx/bds/blockpos";
+import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
 import { CustomForm, Form, FormButton, FormInput, SimpleForm } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { nations_areas, nations_countrys, nations_players, nations_regions, nations_villages } from "..";
 import { database, root } from "../../../utils/utils";
 import { bedrockServer } from "bdsx/launcher";
-import { Chunk, PlayerNameXuid, TerritoryArea, TerritoryPlayer } from "../territory_base";
+import { Chunk, PlayerNameXuid, NationsArea, NationsPlayer } from "../nations_base";
 import { command } from "bdsx/command";
 import { PlayerCommandSelector } from "bdsx/bds/command";
 import { input } from "blessed";
+import { Poineer } from "./pioneer_form";
+import { BlockSource } from "bdsx/bds/block";
 
 export class Region {
-    static async form(ni: NetworkIdentifier) {
+    static async exist_form(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const res = await Form.sendTo(ni, {
             type: "form",
             title: "§l§f토지",
             content: "",
             buttons: [
+                // {
+                //     text: "정보",
+                // },
                 {
                     text: "§l§1토지 이동",
                 },
@@ -24,7 +29,7 @@ export class Region {
                     text: "§l§2토지 위치 확인",
                 },
                 {
-                    text: "§l§5토지 확장",
+                    text: "§l§5토지 확장", //축소 추가
                 }, //여기서 설명
                 {
                     text: "§l§f토지 예치금 납부",
@@ -47,6 +52,9 @@ export class Region {
             case 2: //확장, 축소
                 await this.expand_and_collapse(ni);
                 return;
+            case 3:
+                await this.payment(ni);
+                return;
             case 3: //삭제
                 await this.delete(ni);
                 return;
@@ -57,6 +65,13 @@ export class Region {
                 actor.sendMessage("§c명령어가 취소되었습니다.");
                 return;
         }
+    }
+    static async not_exist_form(ni: NetworkIdentifier) {
+        throw new Error("Method not implemented.");
+    }
+    static async form(ni: NetworkIdentifier) {}
+    static async payment(ni: NetworkIdentifier) {
+        throw new Error("Method not implemented.");
     }
     static async check_cancel(ni: NetworkIdentifier, command: string, content: string): Promise<boolean> {
         const res = await Form.sendTo(ni, {
@@ -85,7 +100,7 @@ export class Region {
         const dimention_id = actor.getDimensionId();
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
-        const data_player_territory: TerritoryPlayer = nations_players.get(xuid)!;
+        const data_player_territory: NationsPlayer = nations_players.get(xuid)!;
         const region_territory_name = data_player_territory.belong_region!;
         const region_territory = nations_regions.get(region_territory_name)!;
 
@@ -99,13 +114,19 @@ export class Region {
         actor.sendMessage(`§l§f${name}님의 토지로 이동했습니다.`);
     }
 
-    static async view_area(chunk: Chunk) {
+    static async view_area(chunk: Chunk, block_source: BlockSource, y: number) {
         const x = chunk.chunk_x * 8;
         const z = chunk.chunk_z * 8;
         for (let i = x; i < x + 8; i++) {
             for (let j = z; j < z + 8; j++) {
                 if (i == x || i == x + 7 || j == z || j == z + 7) {
-                    bedrockServer.executeCommand(`/particle minecraft:portal_reverse_particle ${i} ${chunk.y} ${j}`);
+                    let _y = y;
+                    for (; y + 3 > _y; _y++) {
+                        const block_pos = BlockPos.create(i, _y, j);
+                        const item_name = block_source.getBlock(block_pos).getDescriptionId();
+                        if (item_name === "tile:air") break;
+                    }
+                    bedrockServer.executeCommand(`/particle minecraft:portal_reverse_particle ${i} ${_y} ${j}`);
                 }
             }
         }
@@ -119,125 +140,84 @@ export class Region {
         const position = actor.getPosition();
         const dimention_id = actor.getDimensionId();
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
+        const block_source = actor.getDimensionBlockSource();
 
-        const data_player_territory: TerritoryPlayer = nations_players.get(xuid)!;
+        const data_player_territory: NationsPlayer = nations_players.get(xuid)!;
         const region_territory_name = data_player_territory.belong_region!;
         const region_territory = nations_regions.get(region_territory_name)!;
 
         for (const area_territory_name of region_territory.area_territorys) {
             const area_territory = nations_areas.get(area_territory_name);
-            this.view_area(area_territory?.chunk!);
+            this.view_area(area_territory?.chunk!, block_source, position.y);
         }
     }
 
     static async expand_and_collapse(ni: NetworkIdentifier): Promise<void> {
-        const actor = ni.getActor()!;
-        const xuid = actor.getXuid();
-        const name = actor.getNameTag();
-        const player_name_xuid = new PlayerNameXuid(name, xuid);
-        const position = actor.getPosition();
-        const dimention_id = actor.getDimensionId();
-        const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
-
-        const data_player_territory: TerritoryPlayer = nations_players.get(xuid)!;
-        const region_territory_name = data_player_territory.belong_region!;
-        const data_region_territory = nations_regions.get(region_territory_name)!;
-
-        // FORM
-        //-1: 확장인지 축소인지 확인
-
-        /**0. 땅 개수 확인
-         * 1. 땅이 비어있는지 있는지 확인
-         * 2. 땅 주위 내땅인지 확인
-         * 3. 주위 플레이어 있는지 확인
-         */
-        if (data_region_territory.area_territorys.length >= 4) {
-            actor.sendMessage("§l§fc땅의 최대 개수는 4개입니다.(임시)");
-            actor.sendMessage("§l§f땅의 위치를 바꾸려면 땅 제거 후 다시 생성");
-            //개연성으로 확장, 땅별 순서는 push/pop으로,
-            //유지비 못내면 땅 축소
-            return;
-        }
-
-        const current_area = nations_areas.get(chunk.get_dxz_chunk_line());
-        if (current_area !== undefined) {
-            actor.sendMessage("소유주가 존재하는 토지입니다.");
-            return;
-        }
-
-        let valid_area = true;
-        const dx = [0, 1, 2, 1, 0, -1, -2, -1, 0, 1, 0, -1];
-        const dz = [2, 1, 0, -1, -2, -1, 0, 1, 1, 0, -1, 0]; //이 사이에만 조건에 만족하는게 없으면됌
-        for (let i = 0; i < 12; i++) {
-            const data_around_area = nations_areas.get(`${dimention_id}_${chunk.chunk_x + dx[i]}_${chunk.chunk_z + dz[i]}`);
-            if (data_around_area === undefined) {
-                continue;
-            }
-            if (data_around_area.region_name !== null) {
-                /**
-                 * 1. 친구가 아니면 valid_area false
-                 */
-                const data_around_region_name = data_around_area.region_name;
-                const data_around_region = nations_regions.get(data_around_region_name);
-                const data_around_region_player = nations_players.get(data_around_region?.owner.xuid!);
-                const data_around_region_player_friends = data_around_region_player?.friends;
-                valid_area = !data_around_region_player_friends!.some(friend => friend.xuid === xuid); //친구 목록에 없으면 생성조건 취소
-                actor.sendMessage("§l§f주위 토지에 친구가 아닌 유저의 땅이 포함됩니다.");
-                continue;
-            }
-            if (data_around_area.village_name !== null) {
-                //마을원이 아니면 생성조건 취소
-                const data_around_village_name = data_around_area.village_name;
-                const data_around_village = nations_villages.get(data_around_village_name);
-                valid_area = !data_around_village?.members.some(member => member.xuid === xuid); // 마을원 목록에 없으면 생성조건 취소
-                actor.sendMessage("§l§f주위 토지에 속하지 않은 마을이 포함됩니다.");
-                continue;
-            }
-            if (data_around_area.country_name !== null) {
-                const data_around_country_name = data_around_area.country_name;
-                const data_around_country = nations_countrys.get(data_around_country_name);
-                valid_area = !data_around_country?.members.some(member => member.xuid === xuid); //국가원에 속하지 않으면 생성조건 취소
-                actor.sendMessage("§l§f주위 토지에 속하지 않은 국가가 포함됩니다.");
-                continue;
-            }
-        }
-        if (!valid_area) {
-            actor.sendMessage("§l§c토지 확장에 실패하였습니다.");
-            return;
-        }
-        //마을 국가 범위 확장
-
-        const new_area_territory = new TerritoryArea(chunk, xuid, null, null);
-        nations_areas.set(chunk.get_dxz_chunk_line(), new_area_territory);
-        data_region_territory.area_territorys.push(chunk.get_dxz_chunk_line());
-        nations_regions.set(data_region_territory.region_name, data_region_territory);
-
-        actor.sendMessage("토지를 확장했습니다.");
-        return;
+        Poineer.create_region(ni, "확장");
     }
 
     static async delete(ni: NetworkIdentifier): Promise<void> {
-        const actor = ni.getActor()!;
-        const xuid = actor.getXuid();
-        const name = actor.getNameTag();
-        const player_name_xuid = new PlayerNameXuid(name, xuid);
-        const position = actor.getPosition();
-        const dimention_id = actor.getDimensionId();
-        const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
+        // const actor = ni.getActor()!;
+        // const xuid = actor.getXuid();
+        // const name = actor.getNameTag();
+        // const player_name_xuid = new PlayerNameXuid(name, xuid);
+        // const position = actor.getPosition();
+        // const dimention_id = actor.getDimensionId();
+        // const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
-        const data_player_territory: TerritoryPlayer = nations_players.get(xuid)!;
-        const region_territory_name = data_player_territory.belong_region!;
-        const data_region_territory = nations_regions.get(region_territory_name)!;
+        // const data_player: NationsPlayer = nations_players.get(xuid)!;
+        // const data_player_region_name = data_player.belong_region!;
+        // const data_player_region = nations_regions.get(data_player_region_name)!;
 
-        if (await this.check_cancel(ni, "토지 삭제", "주의: 복구불가")) return;
-        for (const area_territory_name of data_region_territory.area_territorys) {
-            nations_areas.delete(area_territory_name);
-            database.unlink(root.DATABASE_NATIONS_AREA, `${area_territory_name}.json`);
-        }
-        nations_regions.delete(region_territory_name);
-        database.unlink(root.DATABASE_NATIONS_REGION, `${region_territory_name}.json`);
-        data_player_territory.belong_region = null;
-        nations_players.set(data_player_territory.owner.xuid, data_player_territory);
+        // //3번 제거(국가 마을 토지 순서)
+        // if (await this.check_cancel(ni, "토지 삭제", "주의: 복구불가")) return;
+
+        // if (data_player.belong_country!==null) {//국가가 있을때 주위 토지 삭제
+        //     //토지 기준 주위에 이사람 말고 딴사람 있는지도 확인
+        //     //->토지 생성 함수로 또 나눠야함
+        //     for (let i = -2; i <= 2; i++) {
+        //         for (let j = -2; j <= 2; j++) {
+        //             if (i == 0 && j == 0) continue;
+        //             const data_around_area = nations_areas.get(`${dimention_id}_${chunk.chunk_x + i}_${chunk.chunk_z + j}`);
+        //             if (data_around_area === undefined) {
+        //                 const new_area_territory = new NationsArea(chunk, data_player.belong_region, data_player.belong_village, data_player.belong_country);
+        //                 nations_areas.set(`${dimention_id}_${chunk.chunk_x + dx[i]}_${chunk.chunk_z + dz[i]}`, new_area_territory);
+        //             } else {
+        //                 if (data_around_area.country_name === null) {
+        //                     data_around_area.country_name = data_player.belong_country;
+        //                     nations_areas.set(`${dimention_id}_${chunk.chunk_x + dx[i]}_${chunk.chunk_z + dz[i]}`, data_around_area);
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     const dx = [-1, 0, 1, 3, 3, 3, 1, 0, -1, -3, -3, -3];
+        //     const dz = [3, 3, 3, 1, 0, -1, -3, -3, -3, -1, 0, 1]; //추가적으로 확인할껏들
+        //     for (let i = 0; i < 12; i++) {
+        //         const data_around_area = nations_areas.get(`${dimention_id}_${chunk.chunk_x + dx[i]}_${chunk.chunk_z + dz[i]}`);
+        //         if (data_around_area === undefined) {
+        //             const new_area_territory = new NationsArea(chunk, data_player.belong_region, data_player.belong_village, data_player.belong_country);
+        //             nations_areas.set(`${dimention_id}_${chunk.chunk_x + dx[i]}_${chunk.chunk_z + dz[i]}`, new_area_territory);
+        //         } else {
+        //             if (data_around_area.country_name === null) {
+        //                 data_around_area.country_name = data_player.belong_country;
+        //                 nations_areas.set(`${dimention_id}_${chunk.chunk_x + dx[i]}_${chunk.chunk_z + dz[i]}`, data_around_area);
+        //             }
+        //         }
+        //     }
+        // } //국가 확장
+
+        // for (const area_territory_name of data_region_territory.area_territorys) {
+        //     nations_areas.delete(area_territory_name); //이거안됌, 좀 더 유연하게
+        //     database.unlink(root.DATABASE_NATIONS_AREA, `${area_territory_name}.json`);
+        // } //모든 토지 제거
+
+        // nations_regions.delete(region_territory_name);
+        // database.unlink(root.DATABASE_NATIONS_REGION, `${region_territory_name}.json`);
+        // data_player_territory.belong_region = null;
+        // nations_players.set(data_player_territory.owner.xuid, data_player_territory);
+        // //토지그룹,
+        ni.getActor()!.sendMessage("일시적 제거 기능");
+
         return;
     }
 }

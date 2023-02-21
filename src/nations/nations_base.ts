@@ -1,51 +1,5 @@
 import { DimensionId } from "bdsx/bds/actor";
-
-export class PlayerNameXuid {
-    public name: string;
-    public xuid: string;
-
-    constructor(name: string, xuid: string) {
-        this.name = name;
-        this.xuid = xuid;
-    }
-}
-
-export class Chunk {
-    public x: number;
-    public y: number;
-    public z: number;
-    public chunk_x: number;
-    public chunk_z: number;
-    public dimention_id: DimensionId;
-
-    constructor(x: number, y: number, z: number, dimention_id: DimensionId) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.chunk_x = Math.floor(x / 8);
-        this.chunk_z = Math.floor(z / 8);
-        this.dimention_id = dimention_id;
-    }
-
-    public get_dxz(): number[] {
-        return [this.dimention_id, this.x, this.z];
-    }
-    public get_dxz_chunk(): number[] {
-        return [this.dimention_id, this.chunk_x, this.chunk_z];
-    }
-    public get_dxyz(): number[] {
-        return [this.dimention_id, this.x, this.y, this.z];
-    }
-    public get_dxyz_round(): number[] {
-        return [this.dimention_id, Math.round(this.x * 10) / 10, Math.round(this.y * 10) / 10, Math.round(this.z * 10) / 10];
-    }
-    public get_dxyz_round_split(char: string): string {
-        return this.get_dxyz_round().join(char);
-    }
-    public get_dxz_chunk_line(): string {
-        return `${this.dimention_id}_${this.chunk_x}_${this.chunk_z}`;
-    }
-}
+import { Chunk, PlayerNameXuid } from "../../utils/utils";
 
 export class Value {
     public money: number; //100D = 100S = 100G fog mist haze
@@ -59,11 +13,12 @@ export class Value {
     }
 }
 
-export class TerritoryArea {
+export class NationsArea {
+    public chunk: Chunk;
+
     public region_name: string | null; //name_region
     public village_name: string | null; //name_village
     public country_name: string | null; //name_country
-    public chunk: Chunk;
 
     constructor(chunk: Chunk, region_name: string | null, village_name: string | null, country_name: string | null) {
         this.chunk = chunk;
@@ -74,80 +29,97 @@ export class TerritoryArea {
 }
 
 /**토지 클래스  */
-export class TerritoryRegion extends Value {
+export class NationsRegion extends Value {
     public owner: PlayerNameXuid;
     public spawn_position: Chunk;
 
-    public area_territorys: string[];
     public region_name: string;
+    public area_nations: string[];
+    public belong_village: string | null;
+    public belong_country: string | null;
 
-    constructor(owner: PlayerNameXuid, spawn_position: Chunk, area_territorys: string[], region_name: string, money = 0, assimilate = 0, deposit = 0) {
+    constructor(
+        owner: PlayerNameXuid,
+        spawn_position: Chunk,
+        area_nations: string[],
+        region_name: string,
+        belong_village: string | null,
+        belong_country: string | null,
+        money,
+        assimilate,
+        deposit,
+    ) {
         super(money, assimilate, deposit);
         this.owner = owner;
         this.spawn_position = spawn_position;
-        this.area_territorys = area_territorys;
+        this.area_nations = area_nations;
         this.region_name = region_name;
+        this.belong_village = belong_village;
+        this.belong_country = belong_country;
     }
 }
 
 /**마을 클래스  */
-export class TerritoryVillage extends Value {
+export class NationsVillage extends Value {
     public owner: PlayerNameXuid;
     public members: PlayerNameXuid[];
     public spawn_position: Chunk;
 
-    public region_territorys: string[];
     public village_name: string;
+    public region_nations: string[];
+    public belong_country: string | null;
 
     constructor(
         owner: PlayerNameXuid,
         members: PlayerNameXuid[],
         spawn_position: Chunk,
-        region_territorys: string[],
+        region_nations: string[],
         village_name: string,
-        money = 0,
-        assimilate = 0,
-        deposit = 0,
+        belong_country: string | null,
+        money,
+        assimilate,
+        deposit,
     ) {
         super(money, assimilate, deposit);
         this.owner = owner;
         this.members = members;
         this.spawn_position = spawn_position;
-        this.region_territorys = region_territorys;
+        this.region_nations = region_nations;
         this.village_name = village_name;
+        this.belong_country = belong_country;
     }
 }
 
 /**국가 클래스  */
-export class TerritoryCountry extends Value {
+export class NationsCountry extends Value {
     public owner: PlayerNameXuid;
     public members: PlayerNameXuid[];
     public spawn_position: Chunk;
 
-    public village_territorys: string[];
+    public village_nations: string[];
     public country_name: string;
 
     constructor(
         owner: PlayerNameXuid,
         members: PlayerNameXuid[],
         spawn_position: Chunk,
-        village_territorys: string[],
+        village_nations: string[],
         country_name: string,
-        money = 0,
-        assimilate = 0,
-        deposit = 0,
+        money,
+        assimilate,
+        deposit,
     ) {
         super(money, assimilate, deposit);
         this.owner = owner;
         this.members = members;
         this.spawn_position = spawn_position;
-        this.village_territorys = village_territorys;
+        this.village_nations = village_nations;
         this.country_name = country_name;
     }
 }
 
 //개인 디비
-export class TerritoryPlayer extends Value {
+export class NationsPlayer extends Value {
     public ban: Boolean;
     public owner: PlayerNameXuid;
     public friends: PlayerNameXuid[];
@@ -159,13 +131,13 @@ export class TerritoryPlayer extends Value {
     constructor(
         ban: Boolean,
         player_name_xuid: PlayerNameXuid,
-        friends_name_xuid: PlayerNameXuid[] = [],
-        money = 0,
-        assimilate = 0,
-        deposit = 0,
-        belong_region: string | null = null,
-        belong_village: string | null = null,
-        belong_country: string | null = null,
+        friends_name_xuid: PlayerNameXuid[],
+        belong_region: string | null,
+        belong_village: string | null,
+        belong_country: string | null,
+        money,
+        assimilate,
+        deposit,
     ) {
         super(money, assimilate, deposit);
         this.ban = ban;

@@ -5,7 +5,7 @@ import { Color, magenta, red, white } from "colors";
 import * as fs from "fs";
 import { Position } from "source-map";
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos";
-import { TerritoryArea } from "../src/nations/territory_base";
+import { NationsArea } from "../src/nations/nations_base";
 
 namespace Utils {
     export class Database {
@@ -38,12 +38,6 @@ namespace Utils {
         }
     }
     export class Root {
-        DATABASE_TERRITORY(DATABASE_TERRITORY: any) {
-            throw new Error("Method not implemented.");
-        }
-        DATABASE_AREA(DATABASE_AREA: any, area_json: string) {
-            throw new Error("Method not implemented.");
-        }
         public DATABASE = "../database";
         public DATABASE_NATIONS = `${this.DATABASE}/nations`;
         public DATABASE_NATIONS_AREA = `${this.DATABASE_NATIONS}/area`;
@@ -52,6 +46,8 @@ namespace Utils {
         public DATABASE_NATIONS_COUNTRY = `${this.DATABASE_NATIONS}/country`;
         public DATABASE_PLAYER = `${this.DATABASE}/players`;
         public DATABASE_STORY = `${this.DATABASE}/story`;
+        // public DATABASE_STORY_DESTROY = `${this.DATABASE_STORY}/break`;
+        // public DATABASE_STORY_PLACE = `${this.DATABASE_STORY}/place`;
     }
     export class Words {
         public CUSTOM_COMMAND_OPERATOR: string = "관리자 전용 명령어";
@@ -112,3 +108,50 @@ export const database = new Utils.Database();
 export const root = new Utils.Root();
 export const word = new Utils.Words();
 export const console_message = new Utils.ConsoleMessage();
+
+export class PlayerNameXuid {
+    public name: string;
+    public xuid: string;
+
+    constructor(name: string, xuid: string) {
+        this.name = name;
+        this.xuid = xuid;
+    }
+}
+
+export class Chunk {
+    public x: number;
+    public y: number;
+    public z: number;
+    public chunk_x: number;
+    public chunk_z: number;
+    public dimention_id: DimensionId;
+
+    constructor(x: number, y: number, z: number, dimention_id: DimensionId) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.chunk_x = Math.floor(x / 8);
+        this.chunk_z = Math.floor(z / 8);
+        this.dimention_id = dimention_id;
+    }
+
+    public get_dxz(): number[] {
+        return [this.dimention_id, this.x, this.z];
+    }
+    public get_dxz_chunk(): number[] {
+        return [this.dimention_id, this.chunk_x, this.chunk_z];
+    }
+    public get_dxyz(): number[] {
+        return [this.dimention_id, this.x, this.y, this.z];
+    }
+    public get_dxyz_round(): number[] {
+        return [this.dimention_id, Math.round(this.x * 10) / 10, Math.round(this.y * 10) / 10, Math.round(this.z * 10) / 10];
+    }
+    public get_dxyz_round_split(char: string): string {
+        return this.get_dxyz_round().join(char);
+    }
+    public get_dxz_chunk_line(): string {
+        return `${this.dimention_id}_${this.chunk_x}_${this.chunk_z}`;
+    }
+}

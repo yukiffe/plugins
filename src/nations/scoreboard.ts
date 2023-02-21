@@ -4,9 +4,9 @@ import { Scoreboard } from "bdsx/bds/scoreboard";
 import { command } from "bdsx/command";
 import { events } from "bdsx/event";
 import * as fs from "fs";
-import { nations_areas } from ".";
-import { Chunk } from "./territory_base";
-import { nations_players } from "./index";
+import { nations_areas, nations_players } from ".";
+import { bedrockServer } from "bdsx/launcher";
+import { Chunk } from "../../utils/utils";
 
 const players = new Map<NetworkIdentifier, ServerPlayer>();
 
@@ -19,11 +19,14 @@ events.playerLeft.on(ev => {
 });
 
 const intrval = setInterval(() => {
-    for (const [netId, player] of players.entries()) {
+    for (const player of bedrockServer.serverInstance.getPlayers()) {
         const position = player.getPosition();
         const dimention_id = player.getDimensionId();
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
         const area_territory = nations_areas.get(chunk.get_dxz_chunk_line());
+
+        const xuid = player.getXuid();
+        const data_player = nations_players.get(xuid);
 
         type ScoreLine = [string, number];
         let newline: ScoreLine = ["§l§7", 0];
@@ -36,15 +39,24 @@ const intrval = setInterval(() => {
             scoreboard.lines.push(["§l§7미개척지", 2]);
         } else {
             if (area_territory.region_name !== null) {
-                scoreboard.lines.push([`§l§8토지: ${nations_players.get(area_territory.region_name!)?.owner.name}`, 2]);
+                scoreboard.lines.push([`§l§8토지: ${nations_players.get(area_territory.region_name!)?.owner.name}`, 1]);
+            } else {
+                scoreboard.lines.push([`§l§8토지: 미소유`, 1]);
             }
             if (area_territory.village_name !== null) {
                 scoreboard.lines.push([`§l§8마을: ${area_territory?.village_name}`, 2]);
+            } else {
+                scoreboard.lines.push([`§l§8토지: 미등록`, 1]);
             }
             if (area_territory.country_name !== null) {
                 scoreboard.lines.push([`§l§8국가: ${area_territory?.country_name}`, 3]);
+            } else {
+                scoreboard.lines.push([`§l§8토지: 미등록`, 1]);
             }
         }
+        scoreboard.lines.push([`§l§f소지금: ${data_player?.money}`, 4]);
+        scoreboard.lines.push([`§l§f개연성: ${data_player?.assimilate}`, 5]);
+        scoreboard.lines.push([`§l§f동화율: ${data_player?.deposit}`, 6]);
         player.setFakeScoreboard(scoreboard.title, scoreboard.lines);
     }
 }, 1000);
