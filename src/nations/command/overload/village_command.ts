@@ -1,8 +1,9 @@
 import { nations_countrys, nations_players, nations_villages } from "../..";
-import territory from "../register/village_territory";
+import territory from "../register/village_register";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { nations_regions } from "./../../index";
 import { Village } from "../../form/village_form";
+import { Country } from "../../form/country_form";
 
 territory.overload(
     async (params, origin, output) => {
@@ -17,13 +18,12 @@ territory.overload(
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
         const data_player_territory: TerritoryPlayer = nations_players.get(xuid)!;
-        const belong_village: string | null = data_player_territory.belong_village;
 
-        if (belong_village === null) {
-            Village.not_exist_form(ni);
+        if (data_player_territory.belong_country === null) {
+            Country.not_exist_form(ni);
             // Region.form(ni);//토지있는플레이어
         } else {
-            Village.exist_form(ni);
+            Country.exist_form(ni);
             //토지없는플레이어폼
         }
     },

@@ -1,5 +1,5 @@
 import { nations_countrys, nations_players, nations_villages } from "../..";
-import territory from "../register/pioneer_territory";
+import territory from "../register/pioneer_register";
 import { Chunk, PlayerNameXuid, TerritoryCountry, TerritoryPlayer, TerritoryRegion, TerritoryVillage } from "./../../territory_base";
 import { nations_regions } from "./../../index";
 import { Poineer } from "../../form/pioneer_form";
