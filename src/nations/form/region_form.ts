@@ -232,10 +232,10 @@ export class Region {
         if (await this.check_cancel(ni, "토지 삭제", "주의: 복구불가")) return;
         for (const area_territory_name of data_region_territory.area_territorys) {
             nations_areas.delete(area_territory_name);
-            database.unlink(root.DATABASE_TERRITORY_AREA, `${area_territory_name}.json`);
+            database.unlink(root.DATABASE_NATIONS_AREA, `${area_territory_name}.json`);
         }
         nations_regions.delete(region_territory_name);
-        database.unlink(root.DATABASE_TERRITORY_REGION, `${region_territory_name}.json`);
+        database.unlink(root.DATABASE_NATIONS_REGION, `${region_territory_name}.json`);
         data_player_territory.belong_region = null;
         nations_players.set(data_player_territory.owner.xuid, data_player_territory);
         return;

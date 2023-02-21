@@ -4,7 +4,6 @@ import { CommandPermissionLevel } from "bdsx/bds/command";
 import { database, root } from "../../utils/utils";
 import { nations_areas, nations_regions, nations_countrys, nations_players, nations_villages } from ".";
 import { Chunk, PlayerNameXuid, TerritoryArea, TerritoryPlayer, Value } from "./territory_base";
-import region_territory from "./command/register/region_territory";
 
 events.playerJoin.on(ev => {
     const player = ev.player;
