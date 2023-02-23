@@ -2,14 +2,14 @@ import { DimensionId } from "bdsx/bds/actor";
 import { Chunk, PlayerNameXuid } from "../../utils/utils";
 
 export class Value {
-    public money: number; //100D = 100S = 100G fog mist haze
-    public assimilate: number;
-    public deposit: number;
+    public deposit: number; //100D = 100S = 100G fog mist haze
+    public assimilate: number; //동화율
+    public probability: number; //개연성
 
-    constructor(money: number, assimilate: number, deposit: number) {
-        this.money = money;
-        this.assimilate = assimilate;
+    constructor(deposit: number, assimilate: number, probability: number) {
         this.deposit = deposit;
+        this.assimilate = assimilate;
+        this.probability = probability;
     }
 }
 
@@ -31,7 +31,7 @@ export class NationsArea {
 /**토지 클래스  */
 export class NationsRegion extends Value {
     public owner: PlayerNameXuid;
-    public spawn_position: Chunk;
+    public chunk: Chunk;
 
     public region_name: string;
     public area_nations: string[];
@@ -40,7 +40,7 @@ export class NationsRegion extends Value {
 
     constructor(
         owner: PlayerNameXuid,
-        spawn_position: Chunk,
+        chunk: Chunk,
         area_nations: string[],
         region_name: string,
         belong_village: string | null,
@@ -51,7 +51,7 @@ export class NationsRegion extends Value {
     ) {
         super(money, assimilate, deposit);
         this.owner = owner;
-        this.spawn_position = spawn_position;
+        this.chunk = chunk;
         this.area_nations = area_nations;
         this.region_name = region_name;
         this.belong_village = belong_village;
@@ -63,7 +63,7 @@ export class NationsRegion extends Value {
 export class NationsVillage extends Value {
     public owner: PlayerNameXuid;
     public members: PlayerNameXuid[];
-    public spawn_position: Chunk;
+    public chunk: Chunk;
 
     public village_name: string;
     public region_nations: string[];
@@ -72,7 +72,7 @@ export class NationsVillage extends Value {
     constructor(
         owner: PlayerNameXuid,
         members: PlayerNameXuid[],
-        spawn_position: Chunk,
+        chunk: Chunk,
         region_nations: string[],
         village_name: string,
         belong_country: string | null,
@@ -83,7 +83,7 @@ export class NationsVillage extends Value {
         super(money, assimilate, deposit);
         this.owner = owner;
         this.members = members;
-        this.spawn_position = spawn_position;
+        this.chunk = chunk;
         this.region_nations = region_nations;
         this.village_name = village_name;
         this.belong_country = belong_country;
@@ -94,25 +94,16 @@ export class NationsVillage extends Value {
 export class NationsCountry extends Value {
     public owner: PlayerNameXuid;
     public members: PlayerNameXuid[];
-    public spawn_position: Chunk;
+    public chunk: Chunk;
 
     public village_nations: string[];
     public country_name: string;
 
-    constructor(
-        owner: PlayerNameXuid,
-        members: PlayerNameXuid[],
-        spawn_position: Chunk,
-        village_nations: string[],
-        country_name: string,
-        money,
-        assimilate,
-        deposit,
-    ) {
+    constructor(owner: PlayerNameXuid, members: PlayerNameXuid[], chunk: Chunk, village_nations: string[], country_name: string, money, assimilate, deposit) {
         super(money, assimilate, deposit);
         this.owner = owner;
         this.members = members;
-        this.spawn_position = spawn_position;
+        this.chunk = chunk;
         this.village_nations = village_nations;
         this.country_name = country_name;
     }

@@ -46,17 +46,17 @@ const intrval = setInterval(() => {
             if (area_territory.village_name !== null) {
                 scoreboard.lines.push([`§l§8마을: ${area_territory?.village_name}`, 2]);
             } else {
-                scoreboard.lines.push([`§l§8토지: 미등록`, 1]);
+                scoreboard.lines.push([`§l§8마을: 미등록`, 2]);
             }
             if (area_territory.country_name !== null) {
                 scoreboard.lines.push([`§l§8국가: ${area_territory?.country_name}`, 3]);
             } else {
-                scoreboard.lines.push([`§l§8토지: 미등록`, 1]);
+                scoreboard.lines.push([`§l§8국가: 미등록`, 3]);
             }
         }
-        scoreboard.lines.push([`§l§f소지금: ${data_player?.money}`, 4]);
-        scoreboard.lines.push([`§l§f개연성: ${data_player?.assimilate}`, 5]);
-        scoreboard.lines.push([`§l§f동화율: ${data_player?.deposit}`, 6]);
+        scoreboard.lines.push([`§l§f소지금: ${data_player?.deposit}`, 4]);
+        scoreboard.lines.push([`§l§f개연성: ${Math.round(data_player?.probability! * 100) / 100}`, 5]);
+        scoreboard.lines.push([`§l§f동화율: ${Math.round(data_player?.assimilate! * 100) / 100}`, 6]);
         player.setFakeScoreboard(scoreboard.title, scoreboard.lines);
     }
 }, 1000);

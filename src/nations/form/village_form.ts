@@ -1,8 +1,9 @@
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { nations_areas, nations_players, nations_regions } from "..";
-import { Chunk, NationsPlayer, NationsVillage, PlayerNameXuid } from "../territory_base";
-../nations_base
+import { nations_areas, nations_players, nations_regions, nations_villages } from "..";
+import { NationsPlayer, NationsVillage } from "../nations_base";
+import { Chunk, PlayerNameXuid } from "../territory_base";
+
 export class Village {
     static async not_exist_form(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
@@ -70,7 +71,7 @@ export class Village {
         return;
     }
     static async create_village(ni: NetworkIdentifier) {
-        //마을 없고 
+        //마을 없고
         //내 땅이 없으면 return
         //1. 권한 확인
         //2. 마을 생성->village추가+내땅업뎃+땅범위변경
@@ -85,16 +86,14 @@ export class Village {
         const data_player: NationsPlayer = nations_players.get(xuid)!;
         const data_current_area = nations_areas.get(chunk.get_dxz_chunk_line());
         const data_player_region_name = data_player.belong_region;
-        if(data_player_region_name===null){
+        if (data_player_region_name === null) {
             actor.sendMessage("땅이 있는 유저만 선언이 가능합니다");
             return;
         }
         const data_player_region = nations_regions.get(data_player_region_name);
-        
 
         //내땅이고, 마을없고, 국가없으면
         const data_village = new NationsVillage(player_name_xuid, [player_name_xuid], chunk, [data_player_region], xuid, 0, 0, 0);
         nations_villages.set(data_village.village_name, data_village);
-
     }
 }

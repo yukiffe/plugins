@@ -1,9 +1,6 @@
-import { nations_countrys, nations_players, nations_villages } from "../..";
+import { nations_players } from "../..";
+import { NationsPlayer } from "../../nations_base";
 import territory from "../register/village_register";
-import { Chunk, PlayerNameXuid, NationsCountry, NationsPlayer, NationsRegion, NationsVillage } from "../../nations_base";
-import { nations_regions } from "./../../index";
-import { Village } from "../../form/village_form";
-import { Country } from "../../form/country_form";
 
 territory.overload(
     async (params, origin, output) => {

@@ -11,15 +11,15 @@ const deposit_interval = setInterval(() => {
         const xuid = player.getXuid();
         let data_player = nations_players.get(xuid);
         if (data_player === undefined) continue;
-        data_player.deposit += 1 - data_player.deposit / 100;
+        data_player.assimilate += 1 - data_player.assimilate / 100;
         nations_players.set(xuid, data_player);
     }
-}, 1000);
+}, 192000); //3분에 1씩 일단
 const item_tile_interval = setInterval(() => {
     story_tiles.forEach((value: any, key: any) => {
         story_tiles.set(key, value + (1 - value) / 90);
     });
-}, 1000);
+}, 64000); //1분에 한번 추가꿈
 
 events.serverStop.on(() => {
     clearInterval(deposit_interval);
@@ -91,32 +91,32 @@ events.blockDestroy.on(ev => {
     const tile_item_name = ev.blockSource.getBlock(ev.blockPos).getDescriptionId();
     let tile_item = story_tiles.get(tile_item_name);
     if (tile_item === undefined) {
-        tile_item = 1;
+        tile_item = 0.9;
     }
     const data_player = nations_players.get(xuid)!;
-    tile_item -= tile_item / 90;
-    data_player.assimilate += tile_item + 0.1 < 1 ? tile_item + 0.1 : 1;
+    tile_item -= tile_item / 100;
+    data_player.probability += tile_item + 0.1 < 1 ? tile_item + 0.1 : 1;
     story_tiles.set(tile_item_name, tile_item);
 
-    player.sendActionbar(`개연성: ${Math.floor(data_player.assimilate * 100) / 100}(+${Math.floor((tile_item + 0.1) * 100) / 100})`);
+    player.sendActionbar(`개연성: ${Math.floor(data_player.probability * 100) / 100}(+${Math.floor((tile_item + 0.1) * 100) / 100})`);
 });
 
-// events.blockPlace.on(ev => {
-//     const player = ev.player;
-//     const xuid = player.getXuid();
+events.blockPlace.on(ev => {
+    const player = ev.player;
+    const xuid = player.getXuid();
 
-//     const tile_item_name = ev.blockSource.getBlock(ev.blockPos).getDescriptionId();
-//     let tile_item = story_place_tiles.get(tile_item_name);
-//     if (tile_item === undefined) {
-//         tile_item = 1;
-//     }
-//     const data_player = nations_players.get(xuid)!;
-//     tile_item -= tile_item / 100;
-//     data_player.assimilate += tile_item + 0.1 < 1 ? tile_item + 0.1 : 1;
-//     story_place_tiles.set(tile_item_name, tile_item);
+    const tile_item_name = ev.blockSource.getBlock(ev.blockPos).getDescriptionId();
+    let tile_item = story_tiles.get(tile_item_name);
+    if (tile_item === undefined) {
+        tile_item = 0.9;
+    }
+    const data_player = nations_players.get(xuid)!;
+    tile_item -= tile_item / 100;
+    data_player.probability += tile_item + 0.1 < 1 ? tile_item + 0.1 : 1;
+    story_tiles.set(tile_item_name, tile_item);
 
-//     player.sendActionbar(`개연성: ${Math.floor(data_player.assimilate * 100) / 100}(+${Math.floor((tile_item + 0.1) * 100) / 100})`);
-// });
+    player.sendActionbar(`개연성: ${Math.floor(data_player.probability * 100) / 100}(+${Math.floor((tile_item + 0.1) * 100) / 100})`);
+});
 
 // events.blockInteractedWith.on(ev => {
 //     ev.player!.getNetworkIdentifier().getActor()?.sendMessage("TEST3");
@@ -170,10 +170,10 @@ events.blockDestroy.on(ev => {
 
 // const attacking = new Map<string, >();
 
-class Attack extends Value {
-    constructor(money = 0, assimilate = 0, deposit = 0) {
-        super(money, assimilate, deposit);
-    }
-}
+// class Attack extends Value {
+//     constructor(deposit = 0, probability = 0, deposit = 0) {
+//         super(deposit, probability, deposit);
+//     }
+// }
 
-export const attacking = new Map<string, Attack>();
+// export const attacking = new Map<string, Attack>();

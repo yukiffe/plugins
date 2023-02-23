@@ -53,10 +53,10 @@ region_files.forEach(file => {
     const data_region_nations_json: NationsRegion = database.load(root.DATABASE_NATIONS_REGION, file);
     const data_owner_name_xuid = new PlayerNameXuid(data_region_nations_json.owner.name, data_region_nations_json.owner.xuid);
     const data_chunk = new Chunk(
-        data_region_nations_json.spawn_position.x,
-        data_region_nations_json.spawn_position.y,
-        data_region_nations_json.spawn_position.z,
-        data_region_nations_json.spawn_position.dimention_id,
+        data_region_nations_json.chunk.x,
+        data_region_nations_json.chunk.y,
+        data_region_nations_json.chunk.z,
+        data_region_nations_json.chunk.dimention_id,
     );
     const data_area_nationss = data_region_nations_json.area_nations;
     const data_region_nations = new NationsRegion(
@@ -66,9 +66,9 @@ region_files.forEach(file => {
         data_region_nations_json.region_name,
         data_region_nations_json.belong_village,
         data_region_nations_json.belong_country,
-        data_region_nations_json.money,
-        data_region_nations_json.assimilate,
         data_region_nations_json.deposit,
+        data_region_nations_json.assimilate,
+        data_region_nations_json.probability,
     );
     nations_regions.set(`${data_region_nations.region_name}`, data_region_nations);
 });
@@ -79,10 +79,10 @@ village_files.forEach(file => {
     const data_owner_name_xuid = new PlayerNameXuid(data_village_nations_json.owner.name, data_village_nations_json.owner.xuid);
     const data_members_name_xuid = data_village_nations_json.members.map(member => new PlayerNameXuid(member.name, member.xuid));
     const data_chunk = new Chunk(
-        data_village_nations_json.spawn_position.x,
-        data_village_nations_json.spawn_position.y,
-        data_village_nations_json.spawn_position.z,
-        data_village_nations_json.spawn_position.dimention_id,
+        data_village_nations_json.chunk.x,
+        data_village_nations_json.chunk.y,
+        data_village_nations_json.chunk.z,
+        data_village_nations_json.chunk.dimention_id,
     );
     const data_area_nationss = data_village_nations_json.region_nations;
     const data_village_nations = new NationsVillage(
@@ -92,9 +92,9 @@ village_files.forEach(file => {
         data_area_nationss,
         data_village_nations_json.village_name,
         data_village_nations_json.belong_country,
-        data_village_nations_json.money,
-        data_village_nations_json.assimilate,
         data_village_nations_json.deposit,
+        data_village_nations_json.assimilate,
+        data_village_nations_json.probability,
     );
     nations_villages.set(`${data_village_nations.village_name}`, data_village_nations);
 });
@@ -105,10 +105,10 @@ country_files.forEach(file => {
     const data_owner_name_xuid = new PlayerNameXuid(data_country_nations_json.owner.name, data_country_nations_json.owner.xuid);
     const data_members_name_xuid = data_country_nations_json.members.map(member => new PlayerNameXuid(member.name, member.xuid));
     const data_chunk = new Chunk(
-        data_country_nations_json.spawn_position.x,
-        data_country_nations_json.spawn_position.y,
-        data_country_nations_json.spawn_position.z,
-        data_country_nations_json.spawn_position.dimention_id,
+        data_country_nations_json.chunk.x,
+        data_country_nations_json.chunk.y,
+        data_country_nations_json.chunk.z,
+        data_country_nations_json.chunk.dimention_id,
     );
     const data_area_nationss = data_country_nations_json.village_nations;
     const data_country_nations = new NationsCountry(
@@ -117,9 +117,9 @@ country_files.forEach(file => {
         data_chunk,
         data_area_nationss,
         data_country_nations_json.country_name,
-        data_country_nations_json.money,
-        data_country_nations_json.assimilate,
         data_country_nations_json.deposit,
+        data_country_nations_json.assimilate,
+        data_country_nations_json.probability,
     );
     nations_countrys.set(`${data_country_nations.country_name}`, data_country_nations);
 });
@@ -137,9 +137,9 @@ player_files.forEach(file => {
         data_player_nations_json.belong_region,
         data_player_nations_json.belong_village,
         data_player_nations_json.belong_country,
-        data_player_nations_json.money,
-        data_player_nations_json.assimilate,
         data_player_nations_json.deposit,
+        data_player_nations_json.assimilate,
+        data_player_nations_json.probability,
     );
     nations_players.set(`${data_player_nations.owner.xuid}`, data_player_nations);
 });
@@ -156,12 +156,12 @@ story_files.forEach(file => {
 //     story_place_tiles.set(file.replace(".json", ""), data_story_tile);
 // });
 
-// console_message.dos_log_server("nations_command pioneer Loading", yellow, 2);
-// import "./command/overload/pioneer_command";
-// console_message.dos_log_server("nations_command pioneer Loaded", green, 2);
-// console_message.dos_log_server("nations_command region Loading", yellow, 2);
-// import "./command/overload/region_command";
-// console_message.dos_log_server("nations_command region Loaded", green, 2);
+console_message.dos_log_server("nations_command pioneer Loading", yellow, 2);
+import "./command/overload/pioneer_command";
+console_message.dos_log_server("nations_command pioneer Loaded", green, 2);
+console_message.dos_log_server("nations_command region Loading", yellow, 2);
+import "./command/overload/region_command";
+console_message.dos_log_server("nations_command region Loaded", green, 2);
 // console_message.dos_log_server("nations_command village Loading", yellow, 2);
 // import "./command/overload/village_command";
 // console_message.dos_log_server("nations_command village Loaded", green, 2);
