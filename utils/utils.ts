@@ -151,6 +151,9 @@ export class Chunk {
     public get_dxyz_round_split(char: string): string {
         return this.get_dxyz_round().join(char);
     }
+    public get_dxyz_chunk_split(char: string): string {
+        return this.get_dxz_chunk().join(char);
+    }
     public get_dxz_chunk_line(): string {
         return `${this.dimention_id}_${this.chunk_x}_${this.chunk_z}`;
     }

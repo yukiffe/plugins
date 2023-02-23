@@ -1,29 +1,62 @@
-import { nations_countrys, nations_players, nations_villages } from "../..";
 import territory from "../register/region_register";
-import { Chunk, PlayerNameXuid, NationsCountry, NationsPlayer, NationsRegion, NationsVillage } from "../../nations_base";
-import { nations_regions } from "./../../index";
-import { Poineer } from "../../form/pioneer_form";
+import { nations_players } from "../..";
 import { Region } from "../../form/region_form";
+import { NationsPlayer } from "../../nations_base";
+import { command } from "bdsx/command";
 
 territory.overload(
     async (params, origin, output) => {
-        const ni = origin.getEntity()?.getNetworkIdentifier();
-        if (ni === undefined) return;
+        const ni = origin.getEntity()!.getNetworkIdentifier()!;
 
         const actor = ni.getActor()!;
         const xuid = actor.getXuid();
 
-        const data_player_territory: NationsPlayer = nations_players.get(xuid)!;
+        const data_player: NationsPlayer = nations_players.get(xuid)!;
 
-        if (data_player_territory.belong_region !== null) {
-            Region.not_exist_form(ni);
-        } else {
-            //추가) 코드추가
-            Region.exist_form(ni);
+        if (data_player.belong_region === null) {
+            actor.sendMessage("토지가 없습니다.");
+            actor.sendMessage("/개척");
+        }
+        if (params.command === "정보") {
+            Region.info(ni);
+            actor.sendMessage("제작중");
+        } else if (params.command === "이동") {
+            Region.move(ni);
+        } else if (params.command === "확인") {
+            Region.view(ni);
         }
     },
     {
-        // enum1: [command.enum("EnumType", "생성"), true] // string enum
-        //나중에 커맨드 추가
+        command: [command.enum("command", "정보", "이동", "확인"), true],
+    },
+);
+
+territory.overload(
+    async (params, origin, output) => {
+        const ni = origin.getEntity()!.getNetworkIdentifier()!;
+
+        const actor = ni.getActor()!;
+        const xuid = actor.getXuid();
+
+        const data_player: NationsPlayer = nations_players.get(xuid)!;
+
+        if (data_player.belong_region === null) {
+            actor.sendMessage("토지가 없습니다.");
+            actor.sendMessage("/개척");
+        }
+
+        if (params.command === "확장") {
+            Region.expand(ni);
+        } else if (params.command === "축소") {
+            Region.reduction(ni);
+        } else if (params.command === "납부") {
+            Region.probability_pay(ni);
+        } else if (params.command === "삭제") {
+            Region.delete(ni);
+        }
+    },
+    {
+        setting: command.enum("setting", "설정"),
+        command: [command.enum("command", "확장", "축소", "납부", "삭제"), true],
     },
 );
