@@ -163,8 +163,8 @@ territory.overload(
         const data_player: NationsPlayer = nations_players.get(xuid)!;
 
         if (data_player.belong_region === null) {
-            actor.sendMessage("토지가 없습니다.");
-            actor.sendMessage("/개척");
+            actor.sendMessage("§l§c토지가 없습니다.");
+            actor.sendMessage("§l§e/개척");
             return;
         }
 

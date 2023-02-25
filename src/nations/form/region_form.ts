@@ -20,12 +20,12 @@ export class Region {
         const dimention_id = actor.getDimensionId();
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
         const data_current_area = nations_areas.get(chunk.get_dxz_chunk_line());
-        actor.sendMessage(`토지 정보`);
-        actor.sendMessage(`위치: [${data_current_area?.chunk.get_dxyz_round_split(", ")}]`);
-        actor.sendMessage(`청크: [${data_current_area?.chunk.get_dxyz_chunk_split(", ")}]`);
-        actor.sendMessage(`토지: [${data_current_area?.region_name}]`);
-        actor.sendMessage(`마을: [${data_current_area?.village_name}]`);
-        actor.sendMessage(`국가: [${data_current_area?.country_name}]`);
+        actor.sendMessage(`§l§e토지 정보`);
+        actor.sendMessage(`§l§g위치: [${data_current_area?.chunk.get_dxyz_round_split(", ")}]`);
+        actor.sendMessage(`§l§g청크: [${data_current_area?.chunk.get_dxyz_chunk_split(", ")}]`);
+        actor.sendMessage(`§l§g토지: [${data_current_area?.region_name}]`);
+        actor.sendMessage(`§l§g마을: [${data_current_area?.village_name}]`);
+        actor.sendMessage(`§l§g국가: [${data_current_area?.country_name}]`);
     }
 
     static async move(ni: NetworkIdentifier): Promise<void> {
@@ -37,14 +37,14 @@ export class Region {
         const data_player_region_name = data_player.belong_region!;
         const data_player_region = nations_regions.get(data_player_region_name)!;
 
-        if (await FormUtils.form_cancel(ni, "토지 이동", "사용자의 토지로 이동합니다.")) {
-            actor.sendMessage("이동이 취소되었습니다.");
+        if (await FormUtils.form_cancel(ni, "§l§a토지 이동", "§l§g사용자의 토지로 이동합니다.")) {
+            actor.sendMessage("§l§c이동이 취소되었습니다.");
             return;
         } //나중에 모든 친구들에 대해 토지 이동 변경
 
         const [dimention, x, y, z] = data_player_region.chunk.get_dxyz();
         actor.teleport(Vec3.create(x, y, z), dimention);
-        actor.sendMessage(`§l§f${name}님의 토지로 이동했습니다.`);
+        actor.sendMessage(`§l§b${name}님의 토지로 이동했습니다.`);
     }
 
     static async view_area(chunk: Chunk, y: number, block_source: BlockSource) {
@@ -94,8 +94,8 @@ export class Region {
         const data_player: NationsPlayer = nations_players.get(xuid)!;
         const data_current_area = nations_areas.get(chunk.get_dxz_chunk_line());
 
-        if (await FormUtils.form_cancel(ni, "토지 확장", "현재 위치로 토지를 확장합니다.")) {
-            actor.sendMessage("확장이 취소되었습니다.");
+        if (await FormUtils.form_cancel(ni, "§l§e토지 확장", "§l§g현재 위치로 토지를 확장합니다.")) {
+            actor.sendMessage("§l§c확장이 취소되었습니다.");
             return;
         } //나중에 모든 친구들에 대해 토지 이동 변경
 
@@ -103,14 +103,14 @@ export class Region {
         const data_region = nations_regions.get(data_player.belong_region!)!;
         const price = data_region?.area_nations.length! * 10;
         if (data_player.assimilate < price) {
-            actor.sendMessage("동화율이 부족합니다.(토지개수*10)");
+            actor.sendMessage("§l§c동화율이 부족합니다.(토지개수*10)");
             return;
         }
 
         //현재 토지 확인
         if (data_current_area) {
             if (data_current_area.region_name) {
-                actor.sendMessage("확장이 불가능한 토지입니다");
+                actor.sendMessage("§l§c확장이 불가능한 토지입니다");
                 return;
             }
         }
@@ -128,7 +128,7 @@ export class Region {
             }
         }
         if (!valid_extend) {
-            actor.sendMessage("토지가 연결되어있지 않습니다");
+            actor.sendMessage("§l§c토지가 연결되어있지 않습니다");
             return;
         }
 
@@ -149,7 +149,7 @@ export class Region {
                 const data_around_region_player = nations_players.get(data_around_region?.owner.xuid!);
                 const data_around_region_player_friends = data_around_region_player?.friends;
                 if (data_around_region_player_friends!.some(friend => friend.xuid === xuid)) {
-                    actor.sendMessage("§l§f주위 토지에 친구가 아닌 유저의 땅이 포함됩니다.");
+                    actor.sendMessage("§l§c주위 토지에 친구가 아닌 유저의 땅이 포함됩니다.");
                     return;
                 }
             }
@@ -238,7 +238,7 @@ export class Region {
         data_player.assimilate -= price;
         nations_regions.set(data_region.region_name, data_region);
         nations_players.set(data_player.owner.xuid, data_player);
-        actor.sendMessage("새로운 토지를 개척하였습니다.");
+        actor.sendMessage("§l§e새로운 토지를 개척하였습니다.");
         //토지생성 및 정보 변경
 
         // if (data_player.belong_village) {
@@ -290,8 +290,8 @@ export class Region {
 
         const data_player: NationsPlayer = nations_players.get(xuid)!;
 
-        if (await FormUtils.form_cancel(ni, "토지 축소", "마지막으로 확장한 순서로 축소됩니다.\n주의: 사용한 동화율을 돌려받을 수 없습니다.")) {
-            actor.sendMessage("토지 축소를 취소하였습니다.");
+        if (await FormUtils.form_cancel(ni, "§l§e토지 축소", "§l§g마지막으로 확장한 순서로 축소됩니다.\n주의: 사용한 동화율을 돌려받을 수 없습니다.")) {
+            actor.sendMessage("§l§c토지 축소를 취소하였습니다.");
             return;
         } //나중에 모든 친구들에 대해 토지 이동 변경
 
@@ -300,7 +300,7 @@ export class Region {
         if (data_region?.area_nations.length! > 1) {
             const data_pop_area = data_region?.area_nations.pop();
         } else {
-            actor.sendMessage("땅의 최소 개수는 1개입니다");
+            actor.sendMessage("§l§c땅의 최소 개수는 1개입니다");
         }
         //일단 땅만 삭제해두고 나중에 마을/국가 축소 구현
     }
@@ -321,7 +321,7 @@ export class Region {
         const data_current_area = nations_areas.get(chunk.get_dxz_chunk_line())!;
 
         if (data_player.probability < money) {
-            actor.sendMessage("보유한 개연성이 부족합니다");
+            actor.sendMessage("§l§c보유한 개연성이 부족합니다");
             return;
         }
 
@@ -329,7 +329,7 @@ export class Region {
         data_player.probability -= money;
         nations_regions.set(data_region_name, data_region);
         nations_players.set(data_player.owner.xuid, data_player);
-        actor.sendMessage("개연성을 납부하였습니다.");
+        actor.sendMessage("§l§b개연성을 납부하였습니다.");
         return;
     }
     static async set_move(ni: NetworkIdentifier): Promise<void> {
@@ -342,8 +342,8 @@ export class Region {
         const player_name_xuid = new PlayerNameXuid(name, xuid);
         const chunk = new Chunk(position.x, position.y, position.z, dimention_id);
 
-        if (await FormUtils.form_cancel(ni, "스폰포인트 변경", "현재 위치로 스폰포인트를 지정합니다.")) {
-            actor.sendMessage("스폰포인트 변경을 취소하였습니다.");
+        if (await FormUtils.form_cancel(ni, "§l§e스폰포인트 변경", "§l§g현재 위치로 스폰포인트를 지정합니다.")) {
+            actor.sendMessage("§l§c스폰포인트 변경을 취소하였습니다.");
             return;
         } //나중에 모든 친구들에 대해 토지 이동 변경
 
@@ -355,10 +355,10 @@ export class Region {
         if (data_current_area.region_name === data_region?.region_name) {
             data_region.chunk = chunk;
             nations_regions.set(data_region.region_name, data_region);
-            actor.sendMessage("스폰포인트가 변경되었습니다.");
+            actor.sendMessage("§l§b스폰포인트가 변경되었습니다.");
             return;
         } else {
-            actor.sendMessage("자신의 토지 위에서만 스폰포인트 설정이 가능합니다");
+            actor.sendMessage("§l§c자신의 토지 위에서만 스폰포인트 설정이 가능합니다");
             return;
         }
     }
@@ -376,8 +376,8 @@ export class Region {
         const data_player_region = nations_regions.get(data_player_region_name)!;
         //area제거 region제거 player-region제거
 
-        if (await FormUtils.form_cancel(ni, "토지 삭제", "주의) 복구불가")) {
-            actor.sendMessage("토지 삭제를 취소하였습니다.");
+        if (await FormUtils.form_cancel(ni, "§l§c토지 삭제", "§l§4주의) 복구불가")) {
+            actor.sendMessage("§l§a토지 삭제를 취소하였습니다.");
             return;
         } //나중에 모든 친구들에 대해 토지 이동 변경
 
@@ -387,7 +387,7 @@ export class Region {
         }
         nations_regions.delete(data_player_region_name);
         nations_players.set(data_player.owner.xuid, data_player);
-        actor.sendMessage("토지를 삭제하였습니다");
+        actor.sendMessage("§l§c토지를 삭제하였습니다");
         return;
 
         // //3번 제거(국가 마을 토지 순서)

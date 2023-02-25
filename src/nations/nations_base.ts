@@ -47,9 +47,9 @@ export class NationsRegion extends Value {
         belong_country: string | null,
         money,
         assimilate,
-        deposit,
+        probability,
     ) {
-        super(money, assimilate, deposit);
+        super(money, assimilate, probability);
         this.owner = owner;
         this.chunk = chunk;
         this.area_nations = area_nations;

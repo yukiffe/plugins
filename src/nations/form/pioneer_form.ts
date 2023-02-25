@@ -43,8 +43,8 @@ export class Poineer {
                 const data_around_region = nations_regions.get(data_around_region_name);
                 const data_around_region_player = nations_players.get(data_around_region?.owner.xuid!);
                 const data_around_region_player_friends = data_around_region_player?.friends;
-                if (data_around_region_player_friends!.some(friend => friend.xuid === xuid)) {
-                    actor.sendMessage("§l§f주위 토지에 친구가 아닌 유저의 땅이 포함됩니다.");
+                if (!data_around_region_player_friends!.some(friend => friend.xuid === xuid)) {
+                    actor.sendMessage("§l§c주위 토지에 친구가 아닌 유저의 땅이 포함됩니다.");
                     return;
                 }
             }
@@ -119,8 +119,8 @@ export class Poineer {
             data_player.belong_village,
             data_player.belong_country,
             1000,
+            1,
             1000,
-            0,
         );
         nations_regions.set(new_region.region_name, new_region);
         if (data_current_area) {
@@ -141,7 +141,7 @@ export class Poineer {
             nations_areas.set(new_area.chunk.get_dxz_chunk_line(), new_area);
         }
         nations_players.set(data_player.owner.xuid, data_player);
-        actor.sendMessage("새로운 토지를 개척하였습니다.");
+        actor.sendMessage("§l§a새로운 토지를 개척하였습니다.");
         //토지생성 및 정보 변경
 
         // if (data_player.belong_village) {

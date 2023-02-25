@@ -132,28 +132,326 @@ events.blockInteractedWith.on(ev => {
     const block_position = ev.blockPos;
     const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
 
+    const data_player = nations_players.get(xuid)!;
     const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
-    if (data_current_block_area === undefined) return; //미선언 토지
+
+    if (data_current_block_area === undefined) return;
     const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
     if (data_current_block_area.region_name === xuid) return;
-    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
 
-    const data_current_region_name = data_current_block_area.region_name;
-    const data_current_region = nations_regions.get(data_current_region_name!);
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
 
-    if (data_current_region?.assimilate) return CANCEL;
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
 });
 
-events.attackBlock.on(ev => {});
-events.blockDestroy.on(ev => {});
-events.blockDestructionStart.on(ev => {});
-events.blockInteractedWith.on(ev => {});
-events.blockPlace.on(ev => {});
-events.buttonPress.on(ev => {});
-events.chestOpen.on(ev => {});
-events.chestPair.on(ev => {});
-events.entityHurt.on(ev => {});
-events.playerAttack.on(ev => {});
+events.attackBlock.on(ev => {
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const actor = player.getNetworkIdentifier().getActor();
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
+
+    const data_player = nations_players.get(xuid)!;
+    const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
+
+    if (data_current_block_area === undefined) return;
+    const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
+    if (data_current_block_area.region_name === xuid) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
+
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
+
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
+});
+events.blockInteractedWith.on(ev => {
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const actor = player.getNetworkIdentifier().getActor();
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
+
+    const data_player = nations_players.get(xuid)!;
+    const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
+
+    if (data_current_block_area === undefined) return;
+    const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
+    if (data_current_block_area.region_name === xuid) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
+
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
+
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
+});
+events.buttonPress.on(ev => {
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const actor = player.getNetworkIdentifier().getActor();
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
+
+    const data_player = nations_players.get(xuid)!;
+    const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
+
+    if (data_current_block_area === undefined) return;
+    const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
+    if (data_current_block_area.region_name === xuid) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
+
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
+
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
+});
+events.chestOpen.on(ev => {
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const actor = player.getNetworkIdentifier().getActor();
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
+
+    const data_player = nations_players.get(xuid)!;
+    const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
+
+    if (data_current_block_area === undefined) return;
+    const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
+    if (data_current_block_area.region_name === xuid) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
+
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
+
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`§l§g플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+    §l§g토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
+});
+
+events.blockPlace.on(ev => {
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const actor = player.getNetworkIdentifier().getActor();
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
+
+    const data_player = nations_players.get(xuid)!;
+    const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
+
+    if (data_current_block_area === undefined) return;
+    const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
+    if (data_current_block_area.region_name === xuid) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
+
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
+
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`§l§g플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+    §l§g토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
+});
+events.blockDestroy.on(ev => {
+    const player = ev.player;
+    if (player === null) return;
+    if (player.getCommandPermissionLevel() === CommandPermissionLevel.Operator) return;
+
+    const actor = player.getNetworkIdentifier().getActor();
+    const xuid = player.getXuid();
+    const dimention_id = player.getDimensionId();
+    const block_position = ev.blockPos;
+    const chunk = new Chunk(block_position.x, block_position.y, block_position.z, dimention_id);
+
+    const data_player = nations_players.get(xuid)!;
+    const data_current_block_area: NationsArea | undefined = nations_areas.get(chunk.get_dxz_chunk_line());
+
+    if (data_current_block_area === undefined) return;
+    const data_current_area_player = nations_players.get(data_current_block_area?.region_name!);
+    if (data_current_block_area.region_name === xuid) return;
+    if (data_current_area_player?.friends.find(player => player.xuid === xuid)) return; //취소조건들
+
+    const data_current_region_name = data_current_block_area.region_name!;
+    const data_current_region = nations_regions.get(data_current_region_name)!;
+    const data_player_probability = data_player.probability;
+    const data_probability_log = Math.log(data_player_probability);
+
+    if (data_player?.assimilate! < 30) {
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
+        return CANCEL;
+    }
+    if (data_player_probability <= data_probability_log * 5) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
+    if (data_current_region.probability < data_probability_log) {
+        return; //약탈
+    }
+
+    data_current_region.probability -= data_probability_log;
+    data_player!.probability -= data_probability_log * 5;
+
+    actor?.sendActionbar(`§l§g플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
+    §l§g토지: ${data_current_region.probability}(-${data_probability_log})`);
+
+    nations_regions.set(data_current_region_name, data_current_region);
+    nations_players.set(xuid, data_player);
+
+    return CANCEL;
+});
 
 //상자는 캔슬안됌 => 따로따로만들기
 

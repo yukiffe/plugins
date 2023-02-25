@@ -12,7 +12,7 @@ export class FormUtils {
                     text: "§l§e확인",
                 },
                 {
-                    text: "§l§a취소",
+                    text: "§l§c취소",
                 },
             ],
         });

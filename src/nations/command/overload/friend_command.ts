@@ -19,12 +19,12 @@ territory.overload(
         for (const targets of params.player.newResults(origin)) {
             const target = targets.getNetworkIdentifier().getActor();
             if (actor.getXuid() === target!.getXuid()) {
-                actor.sendMessage("자기자신에게는 친구추가가 불가능합니다.");
+                actor.sendMessage("§l§c자기자신에게는 친구추가가 불가능합니다.");
                 return;
             }
-            actor.sendMessage("친구 추가요청을 보냈습니다");
+            actor.sendMessage("§l§a친구 추가요청을 보냈습니다");
             friend.set(target?.getXuid()!, new PlayerNameXuid(target?.getNameTag()!, xuid));
-            target?.sendMessage("친구 추가 요청을 받았습니다. /수락 <닉네임>");
+            target?.sendMessage("§l§g친구 추가 요청을 받았습니다. /수락 <닉네임>");
         }
     },
     {
