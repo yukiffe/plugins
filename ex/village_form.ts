@@ -1,10 +1,11 @@
 import { Form } from "bdsx/bds/form";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { nations_areas, nations_players, nations_regions, nations_villages } from "..";
-import { NationsPlayer, NationsVillage } from "../nations_base";
-import { Chunk, PlayerNameXuid } from "../territory_base";
+import { nations_areas, nations_players, nations_regions, nations_villages } from "../src/nations";
+import { NationsPlayer, NationsVillage } from "../src/nations/nations_base";
+import { Chunk, PlayerNameXuid } from "../src/nations/territory_base";
 
 export class Village {
+    static async move(ni: NetworkIdentifier) {}
     static async not_exist_form(ni: NetworkIdentifier) {
         const actor = ni.getActor()!;
         const res = await Form.sendTo(ni, {

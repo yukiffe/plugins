@@ -1,9 +1,9 @@
-import { nations_countrys, nations_players, nations_villages } from "../..";
-import territory from "../register/country_register";
-import { Chunk, PlayerNameXuid, NationsCountry, NationsPlayer, NationsRegion, NationsVillage } from "../../nations_base";
-import { nations_regions } from "./../../index";
-import { Poineer } from "../../form/pioneer_form";
-import { Country } from "../../form/country_form";
+import { nations_countrys, nations_players, nations_villages } from "../src/nations";
+import territory from "../src/nations/command/register/country_register";
+import { Chunk, PlayerNameXuid, NationsCountry, NationsPlayer, NationsRegion, NationsVillage } from "../src/nations/nations_base";
+import { nations_regions } from "../src/nations/index";
+import { Poineer } from "../src/nations/form/pioneer_form";
+import { Country } from "../src/nations/form/country_form";
 
 territory.overload(
     async (params, origin, output) => {

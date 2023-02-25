@@ -1,3 +1,4 @@
+import { events } from "bdsx/event";
 import { nations_players } from "../..";
 import { Poineer } from "../../form/pioneer_form";
 import { NationsPlayer } from "../../nations_base";

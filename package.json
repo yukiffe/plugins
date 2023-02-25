@@ -17,6 +17,7 @@
         "bdsx": "file:../bdsx"
     },
     "dependencies": {
-        "comment-json": "~1.1.3"
+        "comment-json": "~1.1.3",
+        "queue-typescript": "^1.0.1"
     }
 }
