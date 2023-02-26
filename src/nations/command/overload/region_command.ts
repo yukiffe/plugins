@@ -19,23 +19,23 @@ territory.overload(async (params, origin, output) => {
         const actor = ni.getActor()!;
         const res = await Form.sendTo(ni, {
             type: "form",
-            title: "§l§f토지",
+            title: "§l§e토지",
             content: "",
             buttons: [
                 {
-                    text: "정보",
+                    text: "§l§1정보",
                 },
                 {
-                    text: "§l§1이동",
+                    text: "§l§2이동",
                 },
                 {
-                    text: "§l§2확인",
+                    text: "§l§3확인",
                 },
                 {
-                    text: "확장",
+                    text: "§l§4확장",
                 },
                 {
-                    text: "취소",
+                    text: "§l§c취소",
                 },
             ],
         });
@@ -53,27 +53,27 @@ territory.overload(async (params, origin, output) => {
                 Region.expand(ni);
                 return;
             case 4:
-                actor.sendMessage("토지 명령어 취소");
+                actor.sendMessage("§l§c토지 명령어 취소");
                 return;
             default:
-                actor.sendMessage("명령어가 취소되었습니다.");
+                actor.sendMessage("§l§c명령어가 취소되었습니다.");
                 return;
         }
     } else {
         const actor = ni.getActor()!;
         const res = await Form.sendTo(ni, {
             type: "form",
-            title: "§l§f토지",
+            title: "§l§e토지",
             content: "",
             buttons: [
                 {
-                    text: "정보",
+                    text: "§l§0정보",
                 },
                 {
                     text: "§l§1생성",
                 },
                 {
-                    text: "§l§2취소",
+                    text: "§l§c취소",
                 },
             ],
         });
@@ -85,10 +85,10 @@ territory.overload(async (params, origin, output) => {
                 Poineer.create_region(ni);
                 return;
             case 2: //내 토지 확인
-                actor.sendMessage("기록 취소");
+                actor.sendMessage("§l§c기록 취소");
                 return;
             default:
-                actor.sendMessage("명령어 취소");
+                actor.sendMessage("§l§c명령어 취소");
                 return;
         }
     }
@@ -104,8 +104,8 @@ territory.overload(
         const data_player: NationsPlayer = nations_players.get(xuid)!;
 
         if (data_player.belong_region === null) {
-            actor.sendMessage("토지가 없습니다.");
-            actor.sendMessage("/개척");
+            actor.sendMessage("§l§c토지가 없습니다.");
+            actor.sendMessage("§l§e/개척");
             return;
         }
         if (params.args0 === "정보") {
@@ -132,8 +132,8 @@ territory.overload(
         const data_player: NationsPlayer = nations_players.get(xuid)!;
 
         if (data_player.belong_region === null) {
-            actor.sendMessage("토지가 없습니다.");
-            actor.sendMessage("/개척");
+            actor.sendMessage("§l§c토지가 없습니다.");
+            actor.sendMessage("§l§e/개척");
             return;
         }
 

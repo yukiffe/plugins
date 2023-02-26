@@ -128,9 +128,9 @@ export class NationsPlayer extends Value {
         belong_country: string | null,
         money,
         assimilate,
-        deposit,
+        probability,
     ) {
-        super(money, assimilate, deposit);
+        super(money, assimilate, probability);
         this.ban = ban;
         this.owner = player_name_xuid;
         this.friends = friends_name_xuid;

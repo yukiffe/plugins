@@ -28,7 +28,7 @@ territory.overload(
         }
     },
     {
-        enum1: command.enum("EnumType", "신청"),
+        enum1: command.enum("EnumType1", "신청"),
         player: PlayerCommandSelector,
     },
 );
@@ -51,6 +51,6 @@ territory.overload(
         }
     },
     {
-        enum1: command.enum("EnumType", "수락"),
+        enum1: command.enum("EnumType2", "수락"),
     },
 );

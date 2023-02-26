@@ -16,8 +16,8 @@ const deposit_interval = setInterval(() => {
         data_player.assimilate += 1 - data_player.assimilate / 100;
         nations_players.set(xuid, data_player);
     }
-}, 100);
-// }, 192000); //3분에 1씩 일단
+    // }, 100);
+}, 192000); //3분에 1씩 일단
 const item_tile_interval = setInterval(() => {
     story_tiles.forEach((value: any, key: any) => {
         story_tiles.set(key, value + (0.9 - value) / 90);
@@ -143,14 +143,18 @@ events.blockInteractedWith.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
-        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
         return CANCEL;
     }
     if (data_player_probability <= data_probability_log * 5) {
-        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
         return CANCEL;
     }
     if (data_current_region.probability < data_probability_log) {
@@ -160,8 +164,8 @@ events.blockInteractedWith.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
@@ -191,14 +195,18 @@ events.attackBlock.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
-        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
         return CANCEL;
     }
     if (data_player_probability <= data_probability_log * 5) {
-        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
         return CANCEL;
     }
     if (data_current_region.probability < data_probability_log) {
@@ -208,8 +216,8 @@ events.attackBlock.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
@@ -238,14 +246,18 @@ events.blockInteractedWith.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
-        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
         return CANCEL;
     }
     if (data_player_probability <= data_probability_log * 5) {
-        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
         return CANCEL;
     }
     if (data_current_region.probability < data_probability_log) {
@@ -255,8 +267,8 @@ events.blockInteractedWith.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
@@ -285,14 +297,18 @@ events.buttonPress.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
-        actor?.sendMessage("약탈을 위한 동화율이 부족합니다.(30이상)");
+        actor?.sendMessage("§l§c약탈을 위한 동화율이 부족합니다.(30이상)");
         return CANCEL;
     }
     if (data_player_probability <= data_probability_log * 5) {
-        actor?.sendMessage("약탈을 위한 개연성이 부족합니다");
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
         return CANCEL;
     }
     if (data_current_region.probability < data_probability_log) {
@@ -302,8 +318,8 @@ events.buttonPress.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-                        토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
@@ -332,6 +348,10 @@ events.chestOpen.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
@@ -349,8 +369,8 @@ events.chestOpen.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`§l§g플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-    §l§g토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
@@ -380,6 +400,10 @@ events.blockPlace.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
@@ -397,8 +421,8 @@ events.blockPlace.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`§l§g플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-    §l§g토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
@@ -427,6 +451,10 @@ events.blockDestroy.on(ev => {
     const data_current_region_name = data_current_block_area.region_name!;
     const data_current_region = nations_regions.get(data_current_region_name)!;
     const data_player_probability = data_player.probability;
+    if (data_player_probability === 0) {
+        actor?.sendMessage("§l§c약탈을 위한 개연성이 부족합니다");
+        return CANCEL;
+    }
     const data_probability_log = Math.log(data_player_probability);
 
     if (data_player?.assimilate! < 30) {
@@ -444,8 +472,8 @@ events.blockDestroy.on(ev => {
     data_current_region.probability -= data_probability_log;
     data_player!.probability -= data_probability_log * 5;
 
-    actor?.sendActionbar(`§l§g플레이어: ${data_player.probability}(-${data_probability_log * 5})\n
-    §l§g토지: ${data_current_region.probability}(-${data_probability_log})`);
+    actor?.sendActionbar(`§l§g플레이어: ${Math.ceil(data_player.probability * 100) / 100}(-${Math.ceil(data_probability_log * 5 * 100) / 100})\n
+    §l§g토지: ${Math.ceil(data_current_region.probability * 100) / 100}(-${Math.ceil(data_probability_log * 100) / 100})`);
 
     nations_regions.set(data_current_region_name, data_current_region);
     nations_players.set(xuid, data_player);
